@@ -201,6 +201,34 @@
 
   .empty-hint{font-size:12px;color:var(--text-faint);font-style:italic;padding:8px;text-align:center;border:1px dashed var(--border);border-radius:8px;margin-bottom:8px}
 
+  /* Inline help text under field labels */
+  .hint{display:block;font-size:11px;color:var(--text-faint);font-weight:500;margin-top:4px;line-height:1.4}
+  .hint b{color:var(--text-dim);font-weight:600}
+  .field > label + .hint{margin-top:-2px;margin-bottom:6px}
+
+  /* Rental yearly breakdown table */
+  .rent-year-table{width:100%;border-collapse:collapse;font-size:12px}
+  .rent-year-table th{text-align:right;font-weight:700;color:var(--text-dim);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 8px;border-bottom:2px solid var(--border-strong);position:sticky;top:0;background:var(--bg-card);backdrop-filter:blur(8px);white-space:nowrap}
+  .rent-year-table th:first-child{text-align:left}
+  .rent-year-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',ui-monospace,monospace;text-align:right;white-space:nowrap}
+  .rent-year-table td:first-child{font-family:'Plus Jakarta Sans',sans-serif;text-align:left;font-weight:600}
+  .rent-year-table td.applied{color:var(--purple);font-weight:700}
+  .rent-year-table td.kept{color:var(--green);font-weight:700}
+  .rent-year-table td.oop-pos{color:var(--red)}
+  .rent-year-table td.oop-neg{color:var(--green);font-weight:700}
+  .rent-year-table tfoot td{font-weight:800;border-top:2px solid var(--border-strong);border-bottom:none;padding-top:8px}
+  .rent-year-wrap{max-height:400px;overflow:auto;border-radius:10px}
+  .rent-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--text-dim);margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
+  .rent-legend b{font-family:'JetBrains Mono',ui-monospace,monospace}
+
+  /* Rental surplus preview box */
+  .rental-preview{margin-top:10px;padding:10px 12px;border-radius:10px;background:linear-gradient(135deg,rgba(5,150,105,.08),rgba(124,58,237,.06));border:1px solid rgba(5,150,105,.2);font-size:12px;line-height:1.55}
+  .rental-preview .row{display:flex;justify-content:space-between;padding:3px 0}
+  .rental-preview .row b{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700}
+  .rental-preview .sep{height:1px;background:rgba(5,150,105,.2);margin:6px 0}
+  .rental-preview .net{font-weight:700;font-size:13px;color:var(--green)}
+  .rental-preview .net.neg{color:var(--red)}
+
   .phase-row{display:grid;grid-template-columns:80px 80px 1fr 28px;gap:8px;align-items:end}
 
   /* Charts */
@@ -319,6 +347,7 @@
           <div class="input-prefix cur-prefix" data-prefix="AED"><input class="input" id="downPaymentAmt" type="number" step="10000"></div>
           <div class="slider-row"><input type="range" id="downRange" min="5" max="80" step="1" value="20"></div>
           <div class="slider-hint"><span id="downMinLbl">5% · 100,000</span><span id="downMaxLbl">80% · 1,600,000</span></div>
+          <span class="hint">Cash you pay up front. UAE expats: typically <b>20%</b> for property under AED 5M, <b>30%+</b> above. Residents/GCC nationals: <b>15%</b>.</span>
         </div>
 
         <div class="input-row">
@@ -334,12 +363,14 @@
             <div class="input-suffix" data-suffix="yrs"><input class="input" id="loanYears" type="number" min="1" max="40" value="25"></div>
             <div class="slider-row"><input type="range" id="yearsRange" min="1" max="40" step="1" value="25"></div>
             <div class="slider-hint"><span>1 yr</span><span>40 yrs</span></div>
+            <span class="hint">Longer term = smaller EMI but much more interest. UAE max is typically 25y (expats) or 30y (residents).</span>
           </div>
           <div class="field">
             <label>Interest rate</label>
             <div class="input-suffix" data-suffix="%"><input class="input" id="ratePct" type="number" step="0.1" min="0.1" max="20" value="3.75"></div>
             <div class="slider-row"><input type="range" id="rateRange" min="0.5" max="15" step="0.05" value="3.75"></div>
             <div class="slider-hint"><span>0.5%</span><span>15%</span></div>
+            <span class="hint">Annual rate your bank offers. To model a <b>floating rate</b> that changes over time, use the <b>Rate phases</b> tab below.</span>
           </div>
         </div>
       </div>
@@ -347,6 +378,7 @@
       <!-- Upfront fees -->
       <div class="card glass">
         <h3>📋 Estimated upfront costs <span class="sub" style="margin-left:6px;text-transform:none;letter-spacing:0" id="feesLocaleLbl">· UAE preset</span></h3>
+        <div class="adv-help" style="margin-bottom:10px">One-time costs you pay at purchase. Toggle each fee on/off, or click <b>✎</b> to tweak the amount. Each fee is <b>Flat</b> (fixed amount) + <b>%</b> of price or loan + <b>VAT</b> on top — matches how UAE closings are quoted.</div>
 
         <div id="feesList"></div>
 
@@ -376,17 +408,19 @@
           <button class="adv-tab active" data-adv="prepay">💰 Prepayments</button>
           <button class="adv-tab" data-adv="rates">📈 Rate phases</button>
           <button class="adv-tab" data-adv="settle">🏁 Early settlement</button>
+          <button class="adv-tab" data-adv="rental">🏠 Rental income</button>
           <button class="adv-tab" data-adv="rent">🔀 Rent vs buy</button>
         </div>
 
         <!-- Prepayments panel -->
         <div class="adv-panel active" data-advpanel="prepay">
-          <div class="adv-help">Add an <b>extra monthly amount</b> toward principal and/or <b>one‑time lump‑sum</b> payments. You'll see how much time and interest you save.</div>
+          <div class="adv-help">Add an <b>extra monthly amount</b> toward principal and/or <b>one‑time or recurring lump‑sum</b> payments. You'll see how much time and interest you save vs. paying only the regular EMI.</div>
 
           <div class="input-row">
             <div class="field">
               <label>Extra per month</label>
               <div class="input-prefix cur-prefix" data-prefix="AED"><input class="input" id="extraMonthly" type="number" step="100" min="0" value="0"></div>
+              <span class="hint">A fixed amount you'll add <b>every month</b> on top of the regular EMI. Goes straight to principal — shortens the loan and cuts interest.</span>
             </div>
           </div>
 
@@ -422,17 +456,82 @@
             <div class="field">
               <label>Settle at year <span id="settleYrLbl" style="float:right;color:var(--purple);font-weight:700;font-family:'JetBrains Mono',monospace">5</span></label>
               <div class="slider-row"><input type="range" id="settleYear" min="1" max="40" step="1" value="5"></div>
+              <span class="hint">The year you close the loan by paying the <b>remaining balance in one shot</b>.</span>
             </div>
             <div class="input-row">
               <div class="field">
                 <label>Early settlement fee <span class="sub">(bank penalty)</span></label>
                 <div class="input-suffix" data-suffix="%"><input class="input" id="settleFeePct" type="number" step="0.1" min="0" max="5" value="1"></div>
+                <span class="hint">Bank's charge for closing early, <b>% of outstanding balance</b>. UAE law caps this at 1%.</span>
               </div>
               <div class="field">
                 <label>Max fee cap</label>
                 <div class="input-prefix cur-prefix" data-prefix="AED"><input class="input" id="settleFeeCap" type="number" step="1000" min="0" value="10000"></div>
+                <span class="hint">Hard upper limit on the fee amount. UAE Central Bank caps this at <b>AED 10,000</b>.</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Rental income panel -->
+        <div class="adv-panel" data-advpanel="rental">
+          <div class="adv-help">Model <b>renting out</b> the property. We estimate monthly rent income after vacancy and maintenance, then either let you pocket the surplus or route it back into the mortgage as extra principal — paying the loan off much earlier.</div>
+
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <div class="toggle" id="tglRental"></div>
+            <span style="font-weight:600;font-size:13.5px">Rent this property out</span>
+          </div>
+
+          <div id="rentalControls" style="display:none">
+
+            <div class="input-row">
+              <div class="field">
+                <label>Rent as % of EMI</label>
+                <div class="input-suffix" data-suffix="%"><input class="input" id="rentalRatio" type="number" step="5" min="0" max="300" value="80"></div>
+                <span class="hint">Quick-peg initial monthly rent to a percentage of your EMI. Typical UAE apartment: <b>70–100%</b> of EMI.</span>
+              </div>
+              <div class="field">
+                <label>Or exact monthly rent</label>
+                <div class="input-prefix cur-prefix" data-prefix="AED"><input class="input" id="rentalMonthly" type="number" step="500" min="0" value="0"></div>
+                <span class="hint">If set above 0, this <b>overrides</b> the % of EMI. Leave 0 to keep the ratio.</span>
+              </div>
+            </div>
+
+            <div class="input-row">
+              <div class="field">
+                <label>Rental starts at year</label>
+                <input class="input" id="rentalStartYear" type="number" step="0.25" min="0" max="5" value="0">
+                <span class="hint">Delay before tenant starts paying (hand-over, fit-out, or time to find a tenant). 0 = immediately.</span>
+              </div>
+              <div class="field">
+                <label>Vacancy</label>
+                <div class="input-suffix" data-suffix="%/yr"><input class="input" id="rentalVacancy" type="number" step="1" min="0" max="50" value="5"></div>
+                <span class="hint">Portion of the year the unit is empty between tenants. <b>5%</b> ≈ 2–3 weeks a year.</span>
+              </div>
+            </div>
+
+            <div class="input-row">
+              <div class="field">
+                <label>Maintenance & service charge</label>
+                <div class="input-suffix" data-suffix="% of rent"><input class="input" id="rentalMaint" type="number" step="1" min="0" max="50" value="10"></div>
+                <span class="hint">Service fee, repairs, agency/management. Typical UAE: <b>7–15%</b> of gross rent.</span>
+              </div>
+              <div class="field">
+                <label>Annual rent increase</label>
+                <div class="input-suffix" data-suffix="%/yr"><input class="input" id="rentalEscalate" type="number" step="0.5" min="0" max="15" value="5"></div>
+                <span class="hint">How much rent grows each year. RERA index typically allows <b>0–20%</b> depending on current vs market rent.</span>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2)">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                <div class="toggle" id="tglRentalApply"></div>
+                <span style="font-weight:700">Apply rental surplus to mortgage</span>
+              </label>
+              <span class="hint" style="margin-top:6px">When ON: each month, <b>(net rent − EMI)</b> is added to principal if positive. This is the "let the property pay for itself and then some" strategy — the surplus acts like a <b>variable monthly prepayment</b> that grows with rent, paying the loan off far earlier. When OFF: rent just offsets your out-of-pocket cost.</span>
+            </div>
+
+            <div id="rentalPreview" class="rental-preview"></div>
           </div>
         </div>
 
@@ -450,20 +549,24 @@
               <div class="field">
                 <label>Current monthly rent</label>
                 <div class="input-prefix cur-prefix" data-prefix="AED"><input class="input" id="rentMonthly" type="number" step="500" min="0" value="7500"></div>
+                <span class="hint">What you'd pay if you <b>rented instead</b> of buying a similar unit today.</span>
               </div>
               <div class="field">
                 <label>Rent escalation</label>
                 <div class="input-suffix" data-suffix="%/yr"><input class="input" id="rentEscalate" type="number" step="0.5" min="0" max="15" value="5"></div>
+                <span class="hint">How much rent you'd pay grows each year.</span>
               </div>
             </div>
             <div class="input-row">
               <div class="field">
                 <label>Invested return (opportunity cost)</label>
                 <div class="input-suffix" data-suffix="%/yr"><input class="input" id="investReturn" type="number" step="0.25" min="0" max="15" value="6"></div>
+                <span class="hint">Return you'd get by investing the <b>down payment</b> instead of spending it on property. S&P 500 long-run ≈ 7–10%, conservative ≈ 5–6%.</span>
               </div>
               <div class="field">
                 <label>Property appreciation</label>
                 <div class="input-suffix" data-suffix="%/yr"><input class="input" id="appreciatePct" type="number" step="0.25" min="-5" max="20" value="3"></div>
+                <span class="hint">How much the property's <b>market value</b> grows per year.</span>
               </div>
             </div>
           </div>
@@ -515,6 +618,24 @@
           <div class="val" id="statUpfront">0</div>
           <span class="val-exact" id="statUpfrontExact">0</span>
         </div>
+        <div class="stat glass" id="statRentalCard" style="display:none;background:linear-gradient(135deg,rgba(5,150,105,.06),rgba(124,58,237,.06))">
+          <div class="lbl">Net monthly EMI <span class="sub" style="font-weight:500;text-transform:none;letter-spacing:0;margin-left:6px">after rent · year 1</span></div>
+          <div class="val" id="statNetEmi">0</div>
+          <span class="val-exact" id="statNetEmiExact">0</span>
+          <div class="sub" id="statNetEmiSub">—</div>
+        </div>
+        <div class="stat glass" id="statTotalCostCard" style="display:none;background:linear-gradient(135deg,rgba(5,150,105,.06),rgba(124,58,237,.06))">
+          <div class="lbl">Total you'll pay <span class="sub" style="font-weight:500;text-transform:none;letter-spacing:0;margin-left:6px">upfront + EMI − net rent</span></div>
+          <div class="val" id="statTotalCost">0</div>
+          <span class="val-exact" id="statTotalCostExact">0</span>
+          <div class="sub" id="statTotalCostSub">—</div>
+        </div>
+        <div class="stat glass" id="statRentTotalCard" style="display:none;background:linear-gradient(135deg,rgba(5,150,105,.06),rgba(124,58,237,.06))">
+          <div class="lbl">Total rent collected <span class="sub" style="font-weight:500;text-transform:none;letter-spacing:0;margin-left:6px">net of vacancy + maintenance</span></div>
+          <div class="val" id="statRentTotal">0</div>
+          <span class="val-exact" id="statRentTotalExact">0</span>
+          <div class="sub" id="statRentTotalSub">—</div>
+        </div>
       </div>
 
       <!-- Savings banner -->
@@ -525,6 +646,21 @@
             <div style="font-weight:700;font-size:14px">Prepayments save you <span id="savingsAmount" style="color:var(--green)">—</span></div>
             <div class="sub" id="savingsDetail" style="font-size:12px">Loan finishes <b id="monthsSaved">—</b> earlier</div>
           </div>
+        </div>
+      </div>
+
+      <!-- Rental yearly breakdown (conditional) -->
+      <div class="card glass" id="rentYearCard" style="display:none">
+        <h4>🏠 Rental income — yearly breakdown <span class="sub" id="rentYearSub"></span></h4>
+        <div class="rent-year-wrap">
+          <table class="rent-year-table" id="rentYearTable"></table>
+        </div>
+        <div class="rent-legend">
+          <span><b style="color:var(--text-dim)">Gross</b> — rent billed</span>
+          <span><b style="color:var(--text-dim)">Net</b> — after vacancy &amp; maintenance</span>
+          <span id="rentLegendApplied" style="display:none"><b style="color:var(--purple)">Applied</b> — surplus routed into mortgage</span>
+          <span id="rentLegendKept"><b style="color:var(--green)">Cashflow</b> — your pocket</span>
+          <span><b style="color:var(--red)">OOP</b> — out-of-pocket (EMI − net rent)</span>
         </div>
       </div>
 
@@ -645,6 +781,15 @@ function defaultScenario(){
     lumps: [],
     settle: { enabled:false, atYear:5, feePct:1, feeCap:10000 },
     rent: { enabled:false, monthly:7500, escalatePct:5, investReturnPct:6, appreciatePct:3 },
+    // Rental income (rent-out-the-property scenario):
+    //   startYear  – first year the property produces rent (allow handover/find-tenant delay)
+    //   ratio      – initial monthly rent expressed as % of monthly EMI (default 80%)
+    //   monthly    – if > 0, overrides ratio and uses this fixed amount
+    //   vacancyPct – % of the year the unit is empty
+    //   maintPct   – service charge / maintenance % of gross rent
+    //   escalatePct– annual rent growth %
+    //   applyToMortgage – when true, positive surplus (net rent − EMI) is added to principal each month
+    rental: { enabled:false, startYear:0, ratio:80, monthly:0, vacancyPct:5, maintPct:10, escalatePct:5, applyToMortgage:false },
     fees: uaeFeesDefault()
   };
 }
@@ -668,6 +813,7 @@ function hydrate(sc){
   });
   s.settle = Object.assign({}, d.settle, sc.settle||{});
   s.rent = Object.assign({}, d.rent, sc.rent||{});
+  s.rental = Object.assign({}, d.rental, sc.rental||{});
   s.ratePhases = Array.isArray(sc.ratePhases) ? sc.ratePhases : [];
   s.lumps = (Array.isArray(sc.lumps) ? sc.lumps : []).map(lp => Object.assign({
     id: uid(), label:'', atYear:1, atMonth:0, amount:0, recur:'once', untilYear:null
@@ -715,6 +861,31 @@ function rateAtMonth(monthIdx, s){
   return (phase ? phase.ratePct : s.ratePct) / 100 / 12;
 }
 
+/** Initial monthly rent derived from the scenario (uses fixed monthly if set, else ratio × EMI). */
+function initialRent(sc, emi){
+  const r = sc.rental || {};
+  if (!r.enabled) return 0;
+  if ((r.monthly || 0) > 0) return r.monthly;
+  const ratio = (r.ratio != null ? r.ratio : 80) / 100;
+  return Math.max(0, emi * ratio);
+}
+
+/**
+ * Net rent (after vacancy + maintenance) for a given month, with annual escalation applied.
+ * monthIdx is 1-based so we use (monthIdx-1)/12 for year offset.
+ */
+function netRentAtMonth(sc, emi, monthIdx){
+  const r = sc.rental || {};
+  if (!r.enabled) return 0;
+  const startMonth = Math.max(0, Math.round((r.startYear || 0) * 12));
+  if (monthIdx <= startMonth) return 0;
+  const yrsSinceStart = Math.floor((monthIdx - startMonth - 1) / 12);
+  const gross = initialRent(sc, emi) * Math.pow(1 + (r.escalatePct||0)/100, yrsSinceStart);
+  const afterVacancy = gross * (1 - (r.vacancyPct||0)/100);
+  const afterMaint   = afterVacancy * (1 - (r.maintPct||0)/100);
+  return Math.max(0, afterMaint);
+}
+
 /**
  * Simulate mortgage amortization.
  *
@@ -742,6 +913,11 @@ function simulate(sc, opts={}){
   const settleEnabled = !opts.ignorePrepayments && sc.settle && sc.settle.enabled;
   const settleMonth = settleEnabled ? Math.round(sc.settle.atYear * 12) : -1;
 
+  // Rental surplus (rent out the property) — baseline run always ignores rental side-effects.
+  const rentalOn      = !opts.ignorePrepayments && sc.rental && sc.rental.enabled;
+  const rentalApplies = rentalOn && sc.rental.applyToMortgage;
+  let totalRentGross = 0, totalRentNet = 0, totalRentAppliedToPrincipal = 0;
+
   let payoffMonth = n;
   let hitSettlement = null;
 
@@ -761,6 +937,29 @@ function simulate(sc, opts={}){
 
     // Apply extra monthly principal
     let extraThisMonth = extra;
+
+    // Rental income this month (if enabled). Applies to mortgage only if user opts in.
+    let rentGrossThisMonth = 0, rentNetThisMonth = 0, rentAppliedThisMonth = 0;
+    if (rentalOn){
+      const emiForRatio = monthlyPaymentInitial; // rent is pegged to original EMI
+      const rentStartM = Math.round((sc.rental.startYear||0)*12);
+      if (m > rentStartM){
+        const yrsSince = Math.floor((m - rentStartM - 1)/12);
+        rentGrossThisMonth = initialRent(sc, emiForRatio) * Math.pow(1 + (sc.rental.escalatePct||0)/100, yrsSince);
+        rentNetThisMonth   = netRentAtMonth(sc, emiForRatio, m);
+        totalRentGross += rentGrossThisMonth;
+        totalRentNet   += rentNetThisMonth;
+        if (rentalApplies){
+          const surplus = rentNetThisMonth - curPmt;
+          if (surplus > 0){
+            extraThisMonth += surplus;
+            rentAppliedThisMonth = surplus;
+            totalRentAppliedToPrincipal += surplus;
+          }
+        }
+      }
+    }
+
     // Apply lumps scheduled at this month (supports recurring lumps)
     for (const lp of lumps){
       const startMonth = Math.round((lp.atYear || 0) * 12 + (lp.atMonth || 0));
@@ -798,7 +997,10 @@ function simulate(sc, opts={}){
       principalPaid:actualPrincipal, interestPaid:interest,
       cumPrincipal: (series[series.length-1].cumPrincipal + actualPrincipal),
       cumInterest: totalInterest,
-      payment:thisPaid
+      payment:thisPaid,
+      rentGross: rentGrossThisMonth,
+      rentNet: rentNetThisMonth,
+      rentApplied: rentAppliedThisMonth
     });
 
     // Early settlement check (after this month's regular payment)
@@ -830,23 +1032,46 @@ function simulate(sc, opts={}){
 
   // Aggregate yearly
   const byYear = [];
+  const rentalYearly = [];
+  let ownerOutOfPocketTotal = 0;  // sum(payment - netRent) across all months — owner's net cash outflow post-rent
   for (let y = 1; y <= Math.ceil(payoffMonth/12); y++){
     const startM = (y-1)*12 + 1;
     const endM = Math.min(y*12, payoffMonth);
     let pSum = 0, iSum = 0, paySum = 0;
+    let rGross = 0, rNet = 0, rApplied = 0, netOutOfPocket = 0;
     for (let m = startM; m <= endM; m++){
       if (!series[m]) continue;
-      pSum += series[m].principalPaid;
-      iSum += series[m].interestPaid;
-      paySum += series[m].payment;
+      pSum    += series[m].principalPaid;
+      iSum    += series[m].interestPaid;
+      paySum  += series[m].payment;
+      rGross  += series[m].rentGross || 0;
+      rNet    += series[m].rentNet   || 0;
+      rApplied+= series[m].rentApplied|| 0;
+      const oop = series[m].payment - (series[m].rentNet || 0);
+      netOutOfPocket    += oop;
+      ownerOutOfPocketTotal += oop;
     }
     byYear.push({
       year: y,
       principal: pSum,
       interest: iSum,
       payment: paySum,
-      endBalance: series[endM] ? series[endM].balance : 0
+      endBalance: series[endM] ? series[endM].balance : 0,
+      rentGross: rGross,
+      rentNet: rNet,
+      rentApplied: rApplied,
+      netOutOfPocket
     });
+    if (rentalOn){
+      rentalYearly.push({
+        year: y,
+        gross: rGross,
+        net: rNet,
+        applied: rApplied,
+        kept: rNet - rApplied,  // stays with owner as cashflow
+        netOutOfPocket
+      });
+    }
   }
 
   // Effective rate — total interest / loan / years
@@ -860,7 +1085,19 @@ function simulate(sc, opts={}){
     totalPaid,
     payoffMonth,
     series, byYear, effectiveRate,
-    earlySettle: hitSettlement
+    earlySettle: hitSettlement,
+    rental: rentalOn ? {
+      initialMonthlyRent: initialRent(sc, monthlyPaymentInitial),
+      initialNetMonthlyRent: initialRent(sc, monthlyPaymentInitial) * (1-(sc.rental.vacancyPct||0)/100) * (1-(sc.rental.maintPct||0)/100),
+      totalGross: totalRentGross,
+      totalNet: totalRentNet,
+      keptAsCashflow: totalRentNet - totalRentAppliedToPrincipal,
+      appliedToPrincipal: totalRentAppliedToPrincipal,
+      applyToMortgage: rentalApplies,
+      initialEMI: monthlyPaymentInitial,
+      yearly: rentalYearly,
+      ownerOutOfPocketTotal
+    } : null
   };
 }
 
@@ -967,6 +1204,18 @@ function hydrateInputs(){
   $('#rentEscalate').value = state.rent.escalatePct;
   $('#investReturn').value = state.rent.investReturnPct;
   $('#appreciatePct').value = state.rent.appreciatePct;
+
+  // Rental income
+  const rn = state.rental || {};
+  $('#tglRental').classList.toggle('on', !!rn.enabled);
+  $('#rentalControls').style.display = rn.enabled ? 'block' : 'none';
+  $('#rentalRatio').value = rn.ratio != null ? rn.ratio : 80;
+  $('#rentalMonthly').value = rn.monthly || 0;
+  $('#rentalStartYear').value = rn.startYear || 0;
+  $('#rentalVacancy').value = rn.vacancyPct || 0;
+  $('#rentalMaint').value = rn.maintPct || 0;
+  $('#rentalEscalate').value = rn.escalatePct || 0;
+  $('#tglRentalApply').classList.toggle('on', !!rn.applyToMortgage);
 
   updateSliderFills();
   renderFees();
@@ -1209,11 +1458,56 @@ function renderStats(r, baseline, fees){
   const yrs = Math.floor(r.payoffMonth / 12);
   const mos = r.payoffMonth % 12;
   $('#statPayoff').textContent = mos === 0 ? `${yrs} yr` : `${yrs}y ${mos}m`;
-  $('#statPayoffSub').textContent = r.earlySettle ? 'settled early' : (state.extraMonthly > 0 || (state.lumps||[]).length > 0 ? 'with prepayments' : 'standard term');
+  const hasAnyPrepay = state.extraMonthly > 0 || (state.lumps||[]).length > 0 || (r.rental && r.rental.appliedToPrincipal > 0);
+  $('#statPayoffSub').textContent = r.earlySettle ? 'settled early' : (hasAnyPrepay ? 'with prepayments' : 'standard term');
+
+  // Rental stat cards
+  const rentalCard    = $('#statRentalCard');
+  const totalCostCard = $('#statTotalCostCard');
+  const rentTotalCard = $('#statRentTotalCard');
+  if (r.rental){
+    rentalCard.style.display = '';
+    totalCostCard.style.display = '';
+    rentTotalCard.style.display = '';
+
+    // 1) Net monthly EMI (year 1)
+    const netEmi = r.monthlyPayment - r.rental.initialNetMonthlyRent;
+    $('#statNetEmi').textContent = fmtCur(netEmi, 0);
+    $('#statNetEmiExact').textContent = fmtFull(netEmi);
+    const gross = r.rental.initialMonthlyRent;
+    const net = r.rental.initialNetMonthlyRent;
+    const coverPct = r.monthlyPayment > 0 ? Math.round((net / r.monthlyPayment) * 100) : 0;
+    $('#statNetEmiSub').textContent = `rent ${fmtCur(gross,0)}/mo gross · ${fmtCur(net,0)} net · covers ${coverPct}% of EMI`;
+
+    // 2) Total you'll pay — upfront + owner out-of-pocket over loan life
+    const totalCost = fees.__upfront + r.rental.ownerOutOfPocketTotal;
+    $('#statTotalCost').textContent = fmtCur(totalCost, 1);
+    $('#statTotalCostExact').textContent = fmtFull(totalCost);
+    const baseTotal = fees.__upfront + r.totalPaid;  // what it costs WITHOUT renting
+    const savedByRenting = baseTotal - totalCost;
+    $('#statTotalCostSub').textContent = `vs ${fmtCur(baseTotal, 1)} without renting · saves ${fmtCur(savedByRenting, 1)}`;
+
+    // 3) Total rent collected (net, over the life of the loan)
+    $('#statRentTotal').textContent = fmtCur(r.rental.totalNet, 1);
+    $('#statRentTotalExact').textContent = fmtFull(r.rental.totalNet);
+    if (r.rental.applyToMortgage){
+      $('#statRentTotalSub').textContent = `${fmtCur(r.rental.appliedToPrincipal,0)} routed into mortgage · ${fmtCur(r.rental.keptAsCashflow,0)} kept as cashflow`;
+    } else {
+      $('#statRentTotalSub').textContent = `all kept as cashflow · gross ${fmtCur(r.rental.totalGross,0)}`;
+    }
+  } else {
+    rentalCard.style.display = 'none';
+    totalCostCard.style.display = 'none';
+    rentTotalCard.style.display = 'none';
+  }
+
+  // Rental preview box (inside the rental tab) + yearly breakdown card
+  renderRentalPreview(r);
+  renderRentalYearly(r);
 
   // Savings banner
   const banner = $('#savingsBanner');
-  if (baseline && (state.extraMonthly > 0 || (state.lumps||[]).length > 0 || r.earlySettle)){
+  if (baseline && (state.extraMonthly > 0 || (state.lumps||[]).length > 0 || r.earlySettle || (r.rental && r.rental.applyToMortgage))){
     const interestSaved = baseline.totalInterest - r.totalInterest;
     const monthsSavedN = baseline.payoffMonth - r.payoffMonth;
     if (interestSaved > 1 || monthsSavedN > 0){
@@ -1229,6 +1523,106 @@ function renderStats(r, baseline, fees){
   } else {
     banner.style.display = 'none';
   }
+}
+
+// Render the yearly rental breakdown table in the right column (collection schedule)
+function renderRentalYearly(r){
+  const card = $('#rentYearCard');
+  if (!card) return;
+  if (!r.rental || !r.rental.yearly || r.rental.yearly.length === 0){
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+  const applied = !!r.rental.applyToMortgage;
+  $('#rentYearSub').textContent = applied
+    ? '· surplus auto-applied to mortgage'
+    : '· all kept as owner cashflow';
+  $('#rentLegendApplied').style.display = applied ? '' : 'none';
+
+  const rows = r.rental.yearly;
+  const totals = rows.reduce((acc,y)=>({
+    gross: acc.gross + y.gross,
+    net: acc.net + y.net,
+    applied: acc.applied + y.applied,
+    kept: acc.kept + y.kept,
+    oop: acc.oop + y.netOutOfPocket
+  }), {gross:0,net:0,applied:0,kept:0,oop:0});
+
+  let thead, tbody;
+  if (applied){
+    thead = `<tr><th>Year</th><th>Gross</th><th>Net</th><th>Applied</th><th>Cashflow</th><th>OOP</th></tr>`;
+    tbody = rows.map(y => `
+      <tr>
+        <td>Yr ${y.year}</td>
+        <td>${fmtInt(y.gross)}</td>
+        <td>${fmtInt(y.net)}</td>
+        <td class="applied">${y.applied > 0 ? fmtInt(y.applied) : '—'}</td>
+        <td class="kept">${y.kept > 0 ? fmtInt(y.kept) : '—'}</td>
+        <td class="${y.netOutOfPocket > 0 ? 'oop-pos' : 'oop-neg'}">${fmtInt(y.netOutOfPocket)}</td>
+      </tr>
+    `).join('');
+    const tfoot = `
+      <tfoot><tr>
+        <td>Total</td>
+        <td>${fmtInt(totals.gross)}</td>
+        <td>${fmtInt(totals.net)}</td>
+        <td class="applied">${fmtInt(totals.applied)}</td>
+        <td class="kept">${fmtInt(totals.kept)}</td>
+        <td class="${totals.oop > 0 ? 'oop-pos' : 'oop-neg'}">${fmtInt(totals.oop)}</td>
+      </tr></tfoot>`;
+    $('#rentYearTable').innerHTML = `<thead>${thead}</thead><tbody>${tbody}</tbody>${tfoot}`;
+  } else {
+    thead = `<tr><th>Year</th><th>Gross</th><th>Net</th><th>Cashflow</th><th>OOP</th></tr>`;
+    tbody = rows.map(y => `
+      <tr>
+        <td>Yr ${y.year}</td>
+        <td>${fmtInt(y.gross)}</td>
+        <td>${fmtInt(y.net)}</td>
+        <td class="kept">${fmtInt(y.net)}</td>
+        <td class="${y.netOutOfPocket > 0 ? 'oop-pos' : 'oop-neg'}">${fmtInt(y.netOutOfPocket)}</td>
+      </tr>
+    `).join('');
+    const tfoot = `
+      <tfoot><tr>
+        <td>Total</td>
+        <td>${fmtInt(totals.gross)}</td>
+        <td>${fmtInt(totals.net)}</td>
+        <td class="kept">${fmtInt(totals.net)}</td>
+        <td class="${totals.oop > 0 ? 'oop-pos' : 'oop-neg'}">${fmtInt(totals.oop)}</td>
+      </tr></tfoot>`;
+    $('#rentYearTable').innerHTML = `<thead>${thead}</thead><tbody>${tbody}</tbody>${tfoot}`;
+  }
+}
+
+// Render the rental surplus preview inside the Rental tab
+function renderRentalPreview(r){
+  const el = $('#rentalPreview');
+  if (!el) return;
+  if (!state.rental || !state.rental.enabled || !r.rental){
+    el.innerHTML = '';
+    return;
+  }
+  const emi = r.monthlyPayment;
+  const gross = r.rental.initialMonthlyRent;
+  const vac = gross * (state.rental.vacancyPct||0) / 100;
+  const maint = (gross - vac) * (state.rental.maintPct||0) / 100;
+  const net = r.rental.initialNetMonthlyRent;
+  const surplus = net - emi;
+  const netClass = surplus >= 0 ? 'net' : 'net neg';
+  const label = state.rental.applyToMortgage
+    ? (surplus > 0 ? `Surplus auto-applied to mortgage → <b>${fmtCur(surplus,0)}</b>/mo extra principal` : `Rent below EMI — you top up <b>${fmtCur(Math.abs(surplus),0)}</b>/mo out of pocket`)
+    : (surplus >= 0 ? `Net cashflow in your pocket: <b>${fmtCur(surplus,0)}</b>/mo` : `Out-of-pocket shortfall: <b>${fmtCur(Math.abs(surplus),0)}</b>/mo`);
+  el.innerHTML = `
+    <div style="font-weight:700;margin-bottom:6px">Year-1 cashflow (monthly)</div>
+    <div class="row"><span>Gross rent</span><b>+ ${fmtCur(gross,0)}</b></div>
+    <div class="row"><span>− Vacancy (${state.rental.vacancyPct||0}%)</span><b>− ${fmtCur(vac,0)}</b></div>
+    <div class="row"><span>− Maintenance (${state.rental.maintPct||0}% of rent)</span><b>− ${fmtCur(maint,0)}</b></div>
+    <div class="row"><span><b>Net rent income</b></span><b>${fmtCur(net,0)}</b></div>
+    <div class="row"><span>− EMI</span><b>− ${fmtCur(emi,0)}</b></div>
+    <div class="sep"></div>
+    <div class="${netClass}">${label}</div>
+  `;
 }
 
 // ---------- rendering: charts ----------
@@ -1568,7 +1962,7 @@ function debouncedRender(){
 function renderAll(opts={}){
   if (!opts.skipInputs) hydrateInputs();
   const r = simulate(state);
-  const baseline = (state.extraMonthly > 0 || (state.lumps||[]).length > 0 || (state.settle && state.settle.enabled))
+  const baseline = (state.extraMonthly > 0 || (state.lumps||[]).length > 0 || (state.settle && state.settle.enabled) || (state.rental && state.rental.enabled && state.rental.applyToMortgage))
     ? simulate(state, { ignorePrepayments:true })
     : null;
   const fees = computeFees(state);
@@ -1732,6 +2126,32 @@ function bindInputs(){
     $('#'+id).addEventListener('input', e => {
       markDirty();
       state.rent[key] = parseFloat(e.target.value)||0;
+      persistState();
+      debouncedRender();
+    });
+  });
+
+  // Rental income
+  $('#tglRental').addEventListener('click', ()=>{
+    markDirty();
+    state.rental.enabled = !state.rental.enabled;
+    $('#tglRental').classList.toggle('on', state.rental.enabled);
+    $('#rentalControls').style.display = state.rental.enabled ? 'block' : 'none';
+    persistState();
+    debouncedRender();
+  });
+  $('#tglRentalApply').addEventListener('click', ()=>{
+    markDirty();
+    state.rental.applyToMortgage = !state.rental.applyToMortgage;
+    $('#tglRentalApply').classList.toggle('on', state.rental.applyToMortgage);
+    persistState();
+    debouncedRender();
+  });
+  ['rentalRatio:ratio','rentalMonthly:monthly','rentalStartYear:startYear','rentalVacancy:vacancyPct','rentalMaint:maintPct','rentalEscalate:escalatePct'].forEach(pair => {
+    const [id, key] = pair.split(':');
+    $('#'+id).addEventListener('input', e => {
+      markDirty();
+      state.rental[key] = parseFloat(e.target.value)||0;
       persistState();
       debouncedRender();
     });
