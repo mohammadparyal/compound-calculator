@@ -62,7 +62,11 @@
   .shell{max-width:1440px;margin:0 auto;padding:20px 28px 80px}
 
   /* Nav */
-  nav.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;margin-bottom:22px;position:sticky;top:14px;z-index:20}
+  nav.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;margin-bottom:22px;position:sticky;top:14px;z-index:20;flex-wrap:wrap}
+  .nav-links{display:flex;gap:6px;background:rgba(255,255,255,0.5);border:1px solid var(--border);padding:5px;border-radius:12px}
+  .nav-links a{padding:7px 14px;border-radius:9px;font-size:13px;font-weight:600;color:var(--text-dim);text-decoration:none;transition:all .18s}
+  .nav-links a:hover{color:var(--text);background:rgba(15,23,42,.04)}
+  .nav-links a.active{color:#fff;background:linear-gradient(135deg,var(--cyan),var(--purple));box-shadow:0 4px 14px -4px rgba(124,58,237,.4)}
   .brand{display:flex;align-items:center;gap:12px;font-weight:700}
   .logo{width:36px;height:36px;border-radius:11px;background:conic-gradient(from 180deg,var(--cyan),var(--purple),var(--pink),var(--cyan));position:relative;box-shadow:0 4px 14px rgba(124,58,237,.3)}
   .logo::after{content:"";position:absolute;inset:3px;border-radius:9px;background:#fff}
@@ -354,6 +358,10 @@
       <div class="logo"></div>
       <div><b>CompoundX</b><span>· 2026 Edition</span></div>
     </div>
+    <nav class="nav-links">
+      <a href="index.html" class="active">📈 Investing</a>
+      <a href="mortgage.html">🏠 Mortgage</a>
+    </nav>
     <div class="topbar-actions">
       <div class="seg" id="modeSeg">
         <button class="on" data-mode="accum">Accumulation</button>
