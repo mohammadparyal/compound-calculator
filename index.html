@@ -80,17 +80,18 @@
   .seg button.on{background:#fff;color:var(--text);box-shadow:0 1px 3px rgba(15,23,42,.08)}
 
   /* Hero */
-  .hero{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;padding:8px 4px 28px}
-  .hero h1{font-size:40px;line-height:1.05;font-weight:800;letter-spacing:-1px;background:linear-gradient(120deg,#0f172a 0%,#4c1d95 55%,var(--cyan) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero .tag{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(5,150,105,.1);border:1px solid rgba(5,150,105,.25);color:var(--green);font-size:12px;font-weight:600;margin-bottom:14px}
+  .hero{display:flex;align-items:baseline;gap:14px;padding:4px 4px 14px;flex-wrap:wrap}
+  .hero h1{font-size:22px;line-height:1.2;font-weight:800;letter-spacing:-.3px;background:linear-gradient(120deg,#0f172a 0%,#4c1d95 55%,var(--cyan) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;margin:0}
+  .hero .sub{font-size:12px;color:var(--text-dim);font-weight:500}
   .dot{width:6px;height:6px;border-radius:999px;background:var(--green);box-shadow:0 0 8px rgba(5,150,105,.5)}
-  .hero p{color:var(--text-dim);max-width:640px;margin-top:10px;font-size:15px;line-height:1.55}
+  .hero p{display:none}
 
   /* Stat strip */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:6px 0 26px}
   .stat{padding:18px 20px;position:relative;overflow:hidden}
   .stat .label{color:var(--text-dim);font-size:12px;letter-spacing:.4px;text-transform:uppercase;font-weight:600}
-  .stat .value{font-size:28px;font-weight:800;margin-top:8px;font-variant-numeric:tabular-nums}
+  .stat .value{font-size:28px;font-weight:800;margin-top:8px;font-variant-numeric:tabular-nums;line-height:1.1}
+  .stat .exact{font-size:11px;color:var(--text-faint);margin-top:4px;font-variant-numeric:tabular-nums;font-weight:500}
   .stat .delta{font-size:12px;color:var(--text-dim);margin-top:4px;font-weight:600}
   .stat.accent-cyan .value{color:var(--cyan)}
   .stat.accent-purple .value{color:var(--purple)}
@@ -241,6 +242,27 @@
   .mini-btn:hover{background:var(--bg-card-hover);color:var(--text);border-color:rgba(124,58,237,.35)}
   .mini-btn.danger:hover{color:var(--red);border-color:rgba(220,38,38,.4)}
 
+  /* Saved portfolios panel */
+  .portfolios-card{padding:18px 22px}
+  .portfolio-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+  .portfolios-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .portfolios-empty{padding:28px;text-align:center;color:var(--text-dim);font-size:13px;border:1px dashed var(--border);border-radius:12px}
+  .portfolio-item{position:relative;display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:14px;border:1px solid var(--border);background:var(--bg-card);transition:all .2s;cursor:pointer;overflow:hidden}
+  .portfolio-item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pf-color,var(--cyan))}
+  .portfolio-item:hover{background:var(--bg-card-hover);border-color:rgba(124,58,237,.35);transform:translateY(-1px);box-shadow:0 6px 20px rgba(15,23,42,.06)}
+  .portfolio-item.live{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(8,145,178,.18)}
+  .portfolio-item .pf-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-left:8px}
+  .portfolio-item .pf-name{font-weight:700;font-size:14px;color:var(--text);display:flex;align-items:center;gap:6px}
+  .portfolio-item .pf-live-tag{font-size:10px;color:var(--cyan);background:rgba(8,145,178,.12);padding:2px 7px;border-radius:999px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  .portfolio-item .pf-meta{font-size:11px;color:var(--text-dim);display:flex;flex-wrap:wrap;gap:8px;padding-left:8px}
+  .portfolio-item .pf-meta b{color:var(--text);font-weight:600}
+  .portfolio-item .pf-actions{display:flex;gap:6px;margin-top:8px;padding-left:8px}
+  .portfolio-item .pf-actions button{all:unset;font-size:11px;padding:5px 10px;border-radius:7px;cursor:pointer;font-weight:600;transition:all .15s;font-family:inherit}
+  .portfolio-item .pf-actions .pf-load{background:rgba(124,58,237,.1);color:var(--purple)}
+  .portfolio-item .pf-actions .pf-load:hover{background:rgba(124,58,237,.2)}
+  .portfolio-item .pf-actions .pf-more{background:var(--bg-card);color:var(--text-dim);border:1px solid var(--border)}
+  .portfolio-item .pf-actions .pf-more:hover{color:var(--text);border-color:rgba(124,58,237,.35)}
+
   .scen-menu{position:absolute;z-index:50;min-width:190px;padding:6px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 30px rgba(15,23,42,.14);display:flex;flex-direction:column;gap:2px}
   .scen-menu button{all:unset;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:12px;color:var(--text);cursor:pointer;font-family:inherit}
   .scen-menu button:hover{background:rgba(124,58,237,.08)}
@@ -250,11 +272,17 @@
   .scen-menu-backdrop{position:fixed;inset:0;z-index:49}
 
   /* Breakdown */
-  .breakdown{margin-top:6px;font-size:12px;overflow:auto;max-height:420px}
+  .breakdown{margin-top:6px;font-size:12px}
   .breakdown table{width:100%;border-collapse:collapse}
-  .breakdown th,.breakdown td{text-align:right;padding:8px 10px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .breakdown th,.breakdown td{text-align:right;padding:7px 10px;font-variant-numeric:tabular-nums;white-space:nowrap}
   .breakdown th:first-child,.breakdown td:first-child{text-align:left}
-  .breakdown th{color:var(--text-dim);font-weight:600;font-size:11px;letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-card);backdrop-filter:blur(10px)}
+  .breakdown th{color:var(--text-dim);font-weight:600;font-size:11px;letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg-card)}
+  .breakdown .year-row{background:rgba(124,58,237,.04);font-weight:600}
+  .breakdown .year-row td{border-top:1px solid rgba(124,58,237,.15)}
+  .breakdown-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .bd-seg{display:inline-flex;background:rgba(15,23,42,.04);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px}
+  .bd-seg button{padding:5px 12px;border-radius:6px;background:transparent;border:none;color:var(--text-dim);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
+  .bd-seg button.on{background:#fff;color:var(--text);box-shadow:0 1px 3px rgba(15,23,42,.08)}
   .breakdown tbody tr{border-bottom:1px solid rgba(15,23,42,.05)}
   .breakdown tbody tr:hover{background:rgba(124,58,237,.04)}
   .breakdown .up{color:var(--green)}
@@ -278,10 +306,32 @@
   /* SWP result block */
   .swp-result{padding:14px;border-radius:12px;background:linear-gradient(135deg,rgba(219,39,119,.08),rgba(124,58,237,.05));border:1px solid rgba(219,39,119,.2);margin-top:12px;display:none}
   .swp-result.on{display:block}
-  .swp-result .row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
-  .swp-result .row .v{font-weight:700;font-variant-numeric:tabular-nums}
+  .swp-result .row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;font-size:13px;gap:8px}
+  .swp-result .row .v{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+  .swp-result .row .v small{display:block;font-weight:500;font-size:10.5px;color:var(--text-faint);margin-top:1px}
   .swp-result .warn{color:var(--red)}
   .swp-result .ok{color:var(--green)}
+
+  /* Withdrawal strategy UI */
+  .strategy-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:rgba(15,23,42,.04);border:1px solid var(--border);border-radius:10px;padding:3px;margin:8px 0 12px}
+  .strategy-seg button{padding:8px 6px;border-radius:8px;background:transparent;border:none;color:var(--text-dim);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;line-height:1.3}
+  .strategy-seg button .s-title{display:block;font-size:12px}
+  .strategy-seg button .s-sub{display:block;font-size:10px;font-weight:500;opacity:.7;margin-top:1px}
+  .strategy-seg button.on{background:#fff;color:var(--text);box-shadow:0 1px 3px rgba(15,23,42,.08),0 0 0 1px rgba(219,39,119,.25)}
+  .strategy-seg button.on .s-sub{opacity:.9}
+  .strategy-block{margin-top:4px}
+  .strategy-block[hidden]{display:none !important}
+  .preset-row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 4px}
+  .preset-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-dim);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .preset-btn:hover{background:var(--bg-card-hover);color:var(--text);border-color:rgba(219,39,119,.3)}
+  .wphase-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .wphase-card{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--bg-card);position:relative}
+  .wphase-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:6px}
+  .wphase-tag{font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.04em}
+  .wphase-del{background:transparent;border:none;color:var(--text-faint);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:6px;line-height:1}
+  .wphase-del:hover{color:var(--red);background:rgba(220,38,38,.08)}
+  .wphase-empty{font-size:12px;color:var(--text-faint);padding:14px;text-align:center;border:1px dashed var(--border);border-radius:10px;background:rgba(15,23,42,.02)}
+  .strategy-help{font-size:11px;color:var(--text-faint);line-height:1.5;margin:6px 0 0;padding:8px 10px;background:rgba(124,58,237,.04);border-radius:8px;border-left:2px solid rgba(124,58,237,.3)}
 
   /* Hidden util */
   [hidden]{display:none !important}
@@ -320,19 +370,16 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div>
-      <div class="tag"><span class="dot"></span> Live · updates as you type</div>
-      <h1>The compound calculator<br>built for how you <i>actually</i> save.</h1>
-      <p>Model variable monthly deposits across life phases, apply inflation &amp; tax, simulate withdrawals, and compare scenarios side‑by‑side — with a chart for every decision.</p>
-    </div>
+    <h1>CompoundX</h1>
+    <span class="sub">variable-phase compound calculator · inflation · tax · withdrawals</span>
   </section>
 
   <!-- STATS -->
   <section class="stats" id="stats">
-    <div class="stat glass accent-cyan"><div class="label">Total invested</div><div class="value" id="statContrib">—</div><div class="delta" id="statContribSub">&nbsp;</div></div>
-    <div class="stat glass accent-purple"><div class="label">Interest earned</div><div class="value" id="statInterest">—</div><div class="delta" id="statInterestSub">&nbsp;</div></div>
-    <div class="stat glass accent-green"><div class="label">Final balance</div><div class="value" id="statFinal">—</div><div class="delta" id="statFinalSub">&nbsp;</div></div>
-    <div class="stat glass accent-pink"><div class="label">Real value</div><div class="value" id="statReal">—</div><div class="delta" id="statRealSub">&nbsp;</div></div>
+    <div class="stat glass accent-cyan"><div class="label">Total invested</div><div class="value" id="statContrib">—</div><div class="exact" id="statContribExact">&nbsp;</div><div class="delta" id="statContribSub">&nbsp;</div></div>
+    <div class="stat glass accent-purple"><div class="label">Interest earned</div><div class="value" id="statInterest">—</div><div class="exact" id="statInterestExact">&nbsp;</div><div class="delta" id="statInterestSub">&nbsp;</div></div>
+    <div class="stat glass accent-green"><div class="label">Final balance</div><div class="value" id="statFinal">—</div><div class="exact" id="statFinalExact">&nbsp;</div><div class="delta" id="statFinalSub">&nbsp;</div></div>
+    <div class="stat glass accent-pink"><div class="label">Real value</div><div class="value" id="statReal">—</div><div class="exact" id="statRealExact">&nbsp;</div><div class="delta" id="statRealSub">&nbsp;</div></div>
   </section>
 
   <!-- MAIN -->
@@ -385,7 +432,7 @@
         <div class="lumps" id="lumpsList"></div>
         <button class="add-btn" id="addLump" style="margin-top:8px">＋ Add lump sum / bonus</button>
 
-        <button class="btn btn-primary" id="saveCurrentBtn" style="margin-top:18px">＋ Save as new scenario</button>
+        <button class="btn btn-primary" id="saveCurrentBtn" style="margin-top:18px">💾 Save as new portfolio</button>
         <p style="font-size:11px;color:var(--text-faint);text-align:center;margin-top:12px">Auto‑saved · all data stays in your browser</p>
       </div>
 
@@ -451,16 +498,72 @@
           <div class="toggle" id="tglSWP"></div>
         </div>
         <div id="swpFields" style="margin-top:6px">
-          <div class="input-row">
-            <div class="field"><label>Monthly amount</label><div class="input-prefix cur-prefix" data-prefix="$"><input class="input" id="swpAmount" type="number" step="100"></div></div>
-            <div class="field"><label>Duration</label><div class="input-suffix" data-suffix="yrs"><input class="input" id="swpDuration" type="number" min="1" max="60"></div></div>
+          <label style="font-size:11px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Strategy</label>
+          <div class="strategy-seg" id="swpStrategySeg" role="tablist" aria-label="Withdrawal strategy">
+            <button type="button" data-strategy="fixed" title="Fixed monthly amount with optional yearly escalation">
+              <span class="s-title">Fixed</span><span class="s-sub">monthly + escalation</span>
+            </button>
+            <button type="button" data-strategy="percentage" title="Withdraw a fixed % (e.g. the 4% rule or a more aggressive 6-8%)">
+              <span class="s-title">% rule</span><span class="s-sub">e.g. 4% — 8%</span>
+            </button>
+            <button type="button" data-strategy="phases" title="Custom schedule — front-loaded go-go/slow-go/no-go years">
+              <span class="s-title">Custom</span><span class="s-sub">go-go / slow-go</span>
+            </button>
           </div>
+
+          <!-- Shared inputs -->
           <div class="input-row">
-            <div class="field"><label>Yearly escalation</label><div class="input-suffix" data-suffix="%"><input class="input" id="swpEscalate" type="number" step="0.1" min="0" max="15"></div></div>
+            <div class="field"><label>Duration</label><div class="input-suffix" data-suffix="yrs"><input class="input" id="swpDuration" type="number" min="1" max="60"></div></div>
             <div class="field"><label>Post‑retire return</label><div class="input-suffix" data-suffix="%"><input class="input" id="swpReturn" type="number" step="0.1" min="0" max="15"></div></div>
           </div>
+
+          <!-- Fixed strategy -->
+          <div class="strategy-block" data-strategy-block="fixed">
+            <div class="input-row">
+              <div class="field"><label>Monthly amount</label><div class="input-prefix cur-prefix" data-prefix="$"><input class="input" id="swpAmount" type="number" step="100"></div></div>
+              <div class="field"><label>Yearly escalation</label><div class="input-suffix" data-suffix="%"><input class="input" id="swpEscalate" type="number" step="0.1" min="0" max="15"></div></div>
+            </div>
+            <p class="strategy-help">Withdraw a set amount each month; the escalation bumps it every year to keep pace with your spending needs.</p>
+          </div>
+
+          <!-- Percentage strategy -->
+          <div class="strategy-block" data-strategy-block="percentage" hidden>
+            <div class="input-row">
+              <div class="field">
+                <label>Withdrawal rate</label>
+                <div class="input-suffix" data-suffix="%"><input class="input" id="swpPct" type="number" step="0.25" min="1" max="12"></div>
+              </div>
+              <div class="field">
+                <label>Basis</label>
+                <select class="input" id="swpPctMode">
+                  <option value="initial">% of initial (4% rule)</option>
+                  <option value="balance">% of current balance</option>
+                </select>
+              </div>
+            </div>
+            <div class="preset-row">
+              <button class="preset-btn" type="button" data-pct-preset="4">Classic 4%</button>
+              <button class="preset-btn" type="button" data-pct-preset="5">Moderate 5%</button>
+              <button class="preset-btn" type="button" data-pct-preset="6">Aggressive 6%</button>
+              <button class="preset-btn" type="button" data-pct-preset="8">Very aggressive 8%</button>
+            </div>
+            <p class="strategy-help"><b>% of initial</b> — withdraw this % of your starting pot each year, inflation-adjusted. Stable income, pot can deplete. <b>% of current balance</b> — recompute off today's balance each month. Income flexes with market, pot never fully empties.</p>
+          </div>
+
+          <!-- Phases strategy -->
+          <div class="strategy-block" data-strategy-block="phases" hidden>
+            <div class="preset-row">
+              <button class="preset-btn" type="button" id="swpFrontLoadedPreset" title="Go-go / slow-go / no-go split">⚡ Front-loaded preset</button>
+              <button class="preset-btn" type="button" id="swpAddPhase">+ Add phase</button>
+              <button class="preset-btn" type="button" id="swpClearPhases">Clear all</button>
+            </div>
+            <div class="wphase-list" id="swpPhasesList"></div>
+            <p class="strategy-help">Split retirement into phases — e.g. spend more in your active <b>go-go</b> years (0-10), moderate in <b>slow-go</b> (10-20), and less in <b>no-go</b> years. Any year not covered withdraws nothing.</p>
+          </div>
+
           <div class="swp-result" id="swpResult">
             <div class="row"><span>Total withdrawn</span><span class="v" id="swpTotal">—</span></div>
+            <div class="row"><span>Peak monthly</span><span class="v" id="swpPeak">—</span></div>
             <div class="row"><span>End balance</span><span class="v" id="swpEnd">—</span></div>
             <div class="row" id="swpDepRow"><span>Pot lasts</span><span class="v" id="swpDep">—</span></div>
           </div>
@@ -490,20 +593,46 @@
 
       <div class="card glass"><h4>Yearly deposits vs interest <span class="sub">crossover year highlighted</span></h4><div class="chart-wrap"><canvas id="bars"></canvas></div></div>
 
-      <div class="card glass wide">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-          <h4 style="margin:0">Scenario comparison <span class="sub">click a pill to toggle · ⋯ for more</span></h4>
-          <div class="scen-toolbar">
-            <button class="mini-btn" id="importScenBtn" title="Import scenarios from a JSON file">📥 Import</button>
-            <button class="mini-btn" id="exportCurrentBtn" title="Export current scenario to JSON">📤 Export current</button>
-            <button class="mini-btn" id="exportAllBtn" title="Export all saved scenarios + current">📚 Export all</button>
-            <input type="file" id="importFile" accept="application/json,.json" hidden>
-          </div>
+      <div class="card glass wide swp-card" id="swpCard" hidden>
+        <h4>Retirement drawdown <span class="sub" id="swpChartSub">balance vs monthly withdrawal</span></h4>
+        <div class="legend">
+          <div class="legend-item"><div class="sw" style="background:linear-gradient(90deg,var(--purple),var(--pink))"></div>Pot balance</div>
+          <div class="legend-item"><div class="sw" style="background:rgba(217,119,6,.75)"></div>Monthly withdrawal</div>
+          <div class="legend-item"><div class="sw" style="background:repeating-linear-gradient(45deg,rgba(220,38,38,.45) 0 3px,transparent 3px 6px)"></div>Depletion point</div>
         </div>
-        <div class="scenarios" id="scenPills"></div>
-        <div class="chart-wrap tall" style="margin-top:10px"><canvas id="compare"></canvas></div>
+        <div class="chart-wrap tall"><canvas id="swp"></canvas></div>
+        <div class="hover-readout" id="swpHoverReadout" aria-live="polite">
+          <span class="hr-hint">Hover the chart to inspect any year of retirement</span>
+        </div>
       </div>
+
     </section>
+  </div>
+
+  <!-- SAVED PORTFOLIOS -->
+  <div class="section-head" style="margin-top:28px">
+    <h2>Saved portfolios</h2>
+    <div class="line"></div>
+    <span style="font-size:12px;color:var(--text-dim)" id="portfolioCount">—</span>
+  </div>
+  <div class="card glass wide portfolios-card">
+    <div class="portfolio-toolbar">
+      <div style="font-size:13px;color:var(--text-dim);line-height:1.5">
+        Save the scenario you're building so you can come back to it later.
+        Everything you configured — phases, lump sums, inflation, tax, SWP — is included.
+      </div>
+      <div class="scen-toolbar">
+        <button class="mini-btn" id="saveCurrentBtn2" title="Save the current working scenario">💾 Save current</button>
+        <button class="mini-btn" id="importScenBtn" title="Import portfolio(s) from a JSON file">📥 Import</button>
+        <button class="mini-btn" id="exportCurrentBtn" title="Export current portfolio to JSON">📤 Export current</button>
+        <button class="mini-btn" id="exportAllBtn" title="Export all saved portfolios to JSON">📚 Export all</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+    </div>
+    <div class="portfolios-list" id="portfoliosList"></div>
+    <div class="portfolios-empty" id="portfoliosEmpty" hidden>
+      No portfolios saved yet. Configure your plan above and click <b>💾 Save current</b> to store it.
+    </div>
   </div>
 
   <!-- PHASE TIMELINE STRIP -->
@@ -521,10 +650,17 @@
   </div>
 
   <!-- BREAKDOWN -->
-  <div class="section-head"><h2>Yearly breakdown</h2><div class="line"></div></div>
+  <div class="section-head">
+    <h2 id="breakdownHeading">Yearly breakdown</h2>
+    <div class="line"></div>
+    <div class="bd-seg" id="breakdownSeg" role="tablist" aria-label="Breakdown granularity">
+      <button type="button" data-bd="yearly" class="on">Yearly</button>
+      <button type="button" data-bd="monthly">Monthly</button>
+    </div>
+  </div>
   <div class="card glass breakdown" id="breakdown">
     <table>
-      <thead><tr><th>Year</th><th>Phase</th><th>Deposited</th><th>Interest</th><th>Balance</th><th>Real value</th><th>After‑tax</th></tr></thead>
+      <thead id="breakdownHead"><tr><th>Year</th><th>Phase</th><th>Deposited</th><th>Interest</th><th>Balance</th><th>Real value</th><th>After‑tax</th></tr></thead>
       <tbody id="yearTable"></tbody>
     </table>
   </div>
@@ -595,9 +731,9 @@ const defaultScenario = () => ({
   startingBalance: 10000,
   durationYears: 25, compoundFreq:'monthly', defaultReturnPct:8,
   phases:[
-    { id:uid(), startYear:0,  endYear:5,  monthlyDeposit:2000, depositGrowthPct:0, annualReturnPct:8 },
-    { id:uid(), startYear:5,  endYear:15, monthlyDeposit:1000, depositGrowthPct:2, annualReturnPct:7.5 },
-    { id:uid(), startYear:15, endYear:25, monthlyDeposit:0,    depositGrowthPct:0, annualReturnPct:6 },
+    { id:uid(), startYear:0,  endYear:5,  monthlyDeposit:2000, depositFreq:'monthly', depositGrowthPct:0, annualReturnPct:8 },
+    { id:uid(), startYear:5,  endYear:15, monthlyDeposit:1000, depositFreq:'monthly', depositGrowthPct:2, annualReturnPct:7.5 },
+    { id:uid(), startYear:15, endYear:25, monthlyDeposit:0,    depositFreq:'monthly', depositGrowthPct:0, annualReturnPct:6 },
   ],
   lumpSums:[
     { id:uid(), atYear:3, atMonth:1, amount:10000, label:'Year 3 bonus' }
@@ -605,7 +741,20 @@ const defaultScenario = () => ({
   inflationPct:3, inflationOn:true,
   taxMode:'endCGT', taxRatePct:15, taxOn:true,
   goalSeek:{ enabled:false, targetFinalBalance:1000000 },
-  withdrawal:{ enabled:false, monthlyAmount:3000, escalatePct:3, durationYears:20, postRetireReturnPct:5 }
+  withdrawal:{
+    enabled:false,
+    strategy:'fixed',            // 'fixed' | 'percentage' | 'phases'
+    durationYears:20,
+    postRetireReturnPct:5,
+    // Fixed strategy
+    monthlyAmount:3000,
+    escalatePct:3,
+    // Percentage strategy
+    percentagePct:4,              // e.g., the classic 4% rule
+    percentageMode:'initial',     // 'initial' = 4% of start + inflation; 'balance' = 4% of current balance each yr
+    // Phases strategy (custom schedule, go-go/slow-go/no-go etc.)
+    phases:[]                     // [{ id, startYear, endYear, monthlyAmount, escalatePct }]
+  }
 });
 
 /* ---------- helpers ---------- */
@@ -655,6 +804,18 @@ function fmtPct(n){ return (n).toFixed(1)+'%'; }
 function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
 
 /* ---------- engine ---------- */
+/* Deposit frequency → factor to convert "per-period amount" into a monthly equivalent.
+   Values are the standard averages (52 weeks/yr, 26 biweekly periods/yr, 365 days/yr). */
+const DEPOSIT_FREQ = {
+  monthly:  { factor: 1,       label: 'monthly',  short: '/mo', perYear: 12  },
+  biweekly: { factor: 26/12,   label: 'biweekly', short: '/2wk', perYear: 26 },
+  weekly:   { factor: 52/12,   label: 'weekly',   short: '/wk',  perYear: 52 },
+  daily:    { factor: 365/12,  label: 'daily',    short: '/day', perYear: 365 }
+};
+function freqFactor(p){ return (DEPOSIT_FREQ[p?.depositFreq || 'monthly'] || DEPOSIT_FREQ.monthly).factor; }
+function freqShort(p){ return (DEPOSIT_FREQ[p?.depositFreq || 'monthly'] || DEPOSIT_FREQ.monthly).short; }
+function monthlyOf(p){ return (p.monthlyDeposit||0) * freqFactor(p); }
+
 function findPhase(phases, year){ return phases.find(p => year >= p.startYear && year < p.endYear) || null; }
 
 function simulate(sc){
@@ -688,10 +849,10 @@ function simulate(sc){
       if (m % 12 === 0) balance *= (1 + r);
     }
 
-    // Monthly deposit (escalated from phase start)
+    // Periodic deposit (escalated from phase start) — converted to monthly equivalent
     if (phase){
       const escal = Math.pow(1 + phase.depositGrowthPct/100, yearsIn);
-      const dep = phase.monthlyDeposit * escal;
+      const dep = monthlyOf(phase) * escal;
       balance += dep;
       totalContrib += dep;
     }
@@ -746,24 +907,90 @@ function simulate(sc){
   return { series, yearly, totalContrib, finalBalance, afterTax, taxPaid, realFinal, totalInterest: finalBalance-totalContrib };
 }
 
+// Find which withdrawal phase covers `year`
+function findWithdrawalPhase(phases, year){
+  if (!Array.isArray(phases) || phases.length===0) return null;
+  return phases.find(p => year >= p.startYear && year < p.endYear) || null;
+}
+
+/**
+ * Simulate systematic withdrawal.
+ *   strategy = 'fixed'      → w.monthlyAmount with w.escalatePct/yr
+ *   strategy = 'percentage' → w.percentagePct / yr of (initial | current) balance
+ *   strategy = 'phases'     → per-phase monthlyAmount with optional escalation
+ * Returns { series:[{m,balance,withdrawn,monthlyOut,phase}], yearly:[{year,withdrawn,balance}],
+ *           totalWithdrawn, depletedAtMonth, finalBalance, peakMonthly }.
+ */
 function simulateSWP(startBalance, w, inflation){
-  const months = Math.round(w.durationYears*12);
-  const r = w.postRetireReturnPct/100;
+  const strategy = w.strategy || 'fixed';
+  const months = Math.round((w.durationYears||0)*12);
+  const r = (w.postRetireReturnPct||0)/100;
+  const infl = (inflation||0)/100;
   let bal = startBalance;
   let totalWithdrawn = 0;
   let depletedAtMonth = null;
-  const series = [{m:0, balance:bal, withdrawn:0}];
+  let peakMonthly = 0;
+  const series = [{ m:0, balance:bal, withdrawn:0, monthlyOut:0, phase:null }];
+  const yearly = []; // one row per retirement year
+  let yearWithdrawn = 0;
+
   for (let m=1; m<=months; m++){
     const year = Math.floor((m-1)/12);
-    const escal = Math.pow(1 + w.escalatePct/100, year);
-    const amt = w.monthlyAmount * escal;
+    let amt = 0;
+    let phaseTag = null;
+
+    if (bal > 0){
+      if (strategy === 'fixed'){
+        const escal = Math.pow(1 + (w.escalatePct||0)/100, year);
+        amt = (w.monthlyAmount||0) * escal;
+        phaseTag = 'Fixed';
+      } else if (strategy === 'percentage'){
+        const pct = (w.percentagePct||0)/100;
+        if (w.percentageMode === 'balance'){
+          // Withdraw pct/12 of CURRENT balance each month (no escalation — market does that)
+          amt = bal * pct / 12;
+          phaseTag = `${(w.percentagePct||0).toFixed(1)}% of balance`;
+        } else {
+          // 'initial' — classic 4% rule: pct of START balance, inflation-adjusted
+          const base = startBalance * pct / 12;
+          amt = base * Math.pow(1 + infl, year);
+          phaseTag = `${(w.percentagePct||0).toFixed(1)}% rule`;
+        }
+      } else if (strategy === 'phases'){
+        const ph = findWithdrawalPhase(w.phases, year);
+        if (ph){
+          const yearsIn = year - ph.startYear;
+          const escal = Math.pow(1 + (ph.escalatePct||0)/100, yearsIn);
+          amt = (ph.monthlyAmount||0) * escal;
+          phaseTag = ph.label || `Phase Y${ph.startYear}-${ph.endYear}`;
+        }
+      }
+    }
+
+    // Grow, then withdraw (monthly compounding)
     bal *= (1 + r/12);
+    // Cap amount by available balance to avoid going negative
+    if (amt > bal){ amt = Math.max(0, bal); }
     bal -= amt;
     totalWithdrawn += amt;
-    if (bal < 0 && depletedAtMonth===null){ depletedAtMonth = m; bal = 0; }
-    series.push({m, balance:bal, withdrawn:totalWithdrawn});
+    yearWithdrawn += amt;
+    if (amt > peakMonthly) peakMonthly = amt;
+    if (bal <= 0.0001 && depletedAtMonth===null && m < months){ depletedAtMonth = m; bal = 0; }
+
+    series.push({ m, balance:bal, withdrawn:totalWithdrawn, monthlyOut:amt, phase:phaseTag });
+
+    if (m % 12 === 0){
+      yearly.push({
+        year: m/12,
+        withdrawn: yearWithdrawn,
+        balance: bal,
+        phase: phaseTag
+      });
+      yearWithdrawn = 0;
+    }
   }
-  return { series, totalWithdrawn, depletedAtMonth, finalBalance:bal };
+
+  return { series, yearly, totalWithdrawn, depletedAtMonth, finalBalance: Math.max(0,bal), peakMonthly, strategy };
 }
 
 function goalSeek(sc, target){
@@ -783,8 +1010,24 @@ function goalSeek(sc, target){
 /* ---------- state ---------- */
 let state = loadState();
 let scenarios = loadScenarios();
-let compareIds = loadCompareIds();
 let mode = 'accum';
+let breakdownGranularity = 'yearly';   // 'yearly' | 'monthly'
+
+// Ensure an older-format scenario has the current model shape (no data loss)
+function hydrateScenarioShape(sc){
+  if (!sc) return sc;
+  const d = defaultScenario();
+  sc.withdrawal = sc.withdrawal || {};
+  for (const k of Object.keys(d.withdrawal)){
+    if (!(k in sc.withdrawal)) sc.withdrawal[k] = d.withdrawal[k];
+  }
+  (sc.withdrawal.phases || []).forEach(p => { if (!p.id) p.id = uid(); });
+  // Deposit phases → backfill depositFreq for older scenarios
+  (sc.phases || []).forEach(p => {
+    if (!p.depositFreq) p.depositFreq = 'monthly';
+  });
+  return sc;
+}
 
 function loadState(){
   // Priority: URL hash > draft localStorage > default
@@ -792,12 +1035,12 @@ function loadState(){
   if (hash){
     try {
       const json = LZString.decompressFromEncodedURIComponent(hash);
-      if (json) return JSON.parse(json);
+      if (json) return hydrateScenarioShape(JSON.parse(json));
     } catch(e){ console.warn('bad hash', e); }
   }
   try {
     const raw = localStorage.getItem(LS_CURRENT);
-    if (raw) return JSON.parse(raw);
+    if (raw) return hydrateScenarioShape(JSON.parse(raw));
   } catch(e){}
   return defaultScenario();
 }
@@ -806,27 +1049,16 @@ function persistState(){ localStorage.setItem(LS_CURRENT, JSON.stringify(state))
 function loadScenarios(){
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if (raw){ const arr = JSON.parse(raw); if (Array.isArray(arr) && arr.length) return arr; }
+    if (raw){
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr)) return arr.map(hydrateScenarioShape);
+    }
   } catch(e){}
-  // Seed with a couple of comparison scenarios on first load
-  const s1 = { ...defaultScenario(), id:uid(), name:'Flat $1,250/mo', color:palette.purple,
-    phases:[{ id:uid(), startYear:0, endYear:25, monthlyDeposit:1250, depositGrowthPct:0, annualReturnPct:8 }], lumpSums:[] };
-  const s2 = { ...defaultScenario(), id:uid(), name:'Front‑loaded $3k × 5y', color:palette.pink,
-    phases:[
-      { id:uid(), startYear:0, endYear:5,  monthlyDeposit:3000, depositGrowthPct:0, annualReturnPct:8 },
-      { id:uid(), startYear:5, endYear:25, monthlyDeposit:0,    depositGrowthPct:0, annualReturnPct:7 }
-    ], lumpSums:[] };
-  const seeded = [s1, s2];
-  try { localStorage.setItem(LS_KEY, JSON.stringify(seeded)); } catch(e){}
-  return seeded;
+  return [];
 }
 function persistScenarios(){ localStorage.setItem(LS_KEY, JSON.stringify(scenarios)); }
-
-function loadCompareIds(){
-  try { const raw = localStorage.getItem(LS_COMPARE); if (raw) return JSON.parse(raw); } catch(e){}
-  return scenarios.map(s => s.id); // all on by default
-}
-function persistCompareIds(){ localStorage.setItem(LS_COMPARE, JSON.stringify(compareIds)); }
+// Clean up any leftover compareIds from previous versions
+try { localStorage.removeItem(LS_COMPARE); } catch(e){}
 
 /* ---------- render ---------- */
 let charts = {};
@@ -863,14 +1095,18 @@ function render(opts={}){
 const debouncedQuickRender = debounce(()=>render({skipEditors:true}), 120);
 
 function renderStats(sc, r){
-  $('#statContrib').textContent = fmtFull(r.totalContrib);
+  $('#statContrib').textContent = fmtCur(r.totalContrib, 1);
+  $('#statContribExact').textContent = fmtFull(r.totalContrib);
   $('#statContribSub').textContent = `${sc.phases.filter(p=>p.monthlyDeposit>0).length} active phase(s)`;
-  $('#statInterest').textContent = fmtFull(r.totalInterest);
+  $('#statInterest').textContent = fmtCur(r.totalInterest, 1);
+  $('#statInterestExact').textContent = fmtFull(r.totalInterest);
   const pct = r.totalContrib>0 ? (r.totalInterest/r.totalContrib*100) : 0;
   $('#statInterestSub').textContent = `+${pct.toFixed(0)}% on principal`;
-  $('#statFinal').textContent = fmtFull(r.finalBalance);
-  $('#statFinalSub').textContent = sc.taxOn ? `after tax: ${fmtFull(r.afterTax)}` : `year ${sc.durationYears}`;
-  $('#statReal').textContent = fmtFull(r.realFinal);
+  $('#statFinal').textContent = fmtCur(r.finalBalance, 1);
+  $('#statFinalExact').textContent = fmtFull(r.finalBalance);
+  $('#statFinalSub').textContent = sc.taxOn ? `after tax: ${fmtCur(r.afterTax,1)} (${fmtFull(r.afterTax)})` : `year ${sc.durationYears}`;
+  $('#statReal').textContent = fmtCur(r.realFinal, 1);
+  $('#statRealExact').textContent = fmtFull(r.realFinal);
   $('#statRealSub').textContent = sc.inflationOn ? `after ${sc.durationYears}y of ${sc.inflationPct}% inflation` : 'inflation off';
 }
 
@@ -933,7 +1169,7 @@ function updateHoverReadout(active){
   const realBal = sc.inflationOn ? bal / Math.pow(1+sc.inflationPct/100, year) : bal;
   const ph = findPhase(sc.phases, Math.max(0, year-1));
   const phaseTxt = ph
-    ? `Phase: ${fmtCur(ph.monthlyDeposit,0)}/mo @ ${ph.annualReturnPct}%`
+    ? `Phase: ${fmtCur(ph.monthlyDeposit,0)}${freqShort(ph)} @ ${ph.annualReturnPct}%`
     : (year===0 ? 'Starting balance' : 'No active phase');
 
   el.innerHTML = `
@@ -995,7 +1231,7 @@ function renderCharts(sc, r){
               const sc2 = currentSc; if (!sc2) return `Year ${year}`;
               const ph = findPhase(sc2.phases, Math.max(0, year-1));
               return ph
-                ? `Year ${year} — Phase (${fmtCur(ph.monthlyDeposit,0)}/mo @ ${ph.annualReturnPct}%)`
+                ? `Year ${year} — Phase (${fmtCur(ph.monthlyDeposit,0)}${freqShort(ph)} @ ${ph.annualReturnPct}%)`
                 : `Year ${year}`;
             },
             label:(c)=>` ${c.dataset.label}: ${fmtFull(c.parsed.y)}`,
@@ -1085,7 +1321,7 @@ function renderCharts(sc, r){
                 const sc2 = currentSc; if (!sc2) return `Year ${year}`;
                 const ph = findPhase(sc2.phases, Math.max(0, year-1));
                 return ph
-                  ? `Year ${year} — ${fmtCur(ph.monthlyDeposit,0)}/mo @ ${ph.annualReturnPct}%`
+                  ? `Year ${year} — ${fmtCur(ph.monthlyDeposit,0)}${freqShort(ph)} @ ${ph.annualReturnPct}%`
                   : `Year ${year}`;
               },
               label:(c)=>` ${c.dataset.label}: ${fmtFull(c.parsed.y)}`,
@@ -1113,83 +1349,6 @@ function renderCharts(sc, r){
     charts.bars.data.datasets[1].data = intr;
     charts.bars.update('none');
   }
-
-  /* Scenario comparison */
-  renderCompareChart(sc, r);
-}
-
-function renderCompareChart(sc, r){
-  const years = Array.from({length:sc.durationYears+1}, (_,i)=>i);
-  const datasets = [];
-  datasets.push({
-    label:`${sc.name} (current)`, data: yearlyBalances(sc, r),
-    borderColor:palette.cyan, backgroundColor:'rgba(8,145,178,.1)',
-    fill:true, tension:.35, pointRadius:0, borderWidth:2.5
-  });
-
-  // Ensure current scenario gets hover styling
-  datasets[0].pointRadius = 0;
-  datasets[0].pointHoverRadius = 6;
-  datasets[0].pointHitRadius = 20;
-  datasets[0].pointBackgroundColor = palette.cyan;
-  datasets[0].pointBorderColor = '#fff';
-  datasets[0].pointBorderWidth = 2;
-
-  scenarios.forEach((s, idx) => {
-    if (!compareIds.includes(s.id)) return;
-    const sim = simulate(s);
-    // Align series length to max durationYears seen
-    const yrs = Array.from({length:s.durationYears+1}, (_,i)=>i);
-    const bals = yearlyBalances(s, sim);
-    const color = s.color || COMPARE_COLORS[idx % COMPARE_COLORS.length];
-    datasets.push({
-      label: s.name, data: bals, borderColor: color,
-      fill:false, tension:.35, pointRadius:0, borderWidth:2, borderDash: idx%2 ? [2,3] : [6,4],
-      pointHoverRadius:6, pointHitRadius:20,
-      pointBackgroundColor:color, pointBorderColor:'#fff', pointBorderWidth:2
-    });
-  });
-
-  // Use whichever series is longest for x axis
-  let maxLen = sc.durationYears+1;
-  datasets.forEach(d=>{ if (d.data.length > maxLen) maxLen = d.data.length; });
-  const xs = Array.from({length:maxLen}, (_,i)=>i);
-
-  if (!charts.compare){
-    const ctx = $('#compare').getContext('2d');
-    charts.compare = new Chart(ctx, {
-      type:'line',
-      data:{ labels: xs, datasets },
-      plugins:[crosshairPlugin],
-      options:{ responsive:true, maintainAspectRatio:false, animation:{duration:400},
-        interaction:{ mode:'index', intersect:false, axis:'x' },
-        plugins:{ legend:{display:true, position:'bottom', labels:{boxWidth:10, font:{size:11}}},
-          tooltip:{ mode:'index', intersect:false,
-            backgroundColor:palette.tooltipBg, titleColor:palette.tooltipText, bodyColor:palette.tooltipText,
-            borderColor:palette.border, borderWidth:1, padding:12, cornerRadius:10,
-            titleFont:{weight:'700', size:13}, bodyFont:{size:12}, boxPadding:6,
-            itemSort:(a,b)=> b.parsed.y - a.parsed.y,
-            callbacks:{
-              title:(c)=>`Year ${c[0].label}`,
-              label:(c)=>` ${c.dataset.label}: ${fmtFull(c.parsed.y)}`,
-              afterBody:(items)=>{
-                if (items.length < 2) return '';
-                // Show gap between best and worst series at this year
-                const vals = items.map(i=>i.parsed.y);
-                const best = Math.max(...vals), worst = Math.min(...vals);
-                const gap = best - worst;
-                const pct = worst>0 ? ((best/worst)-1)*100 : 0;
-                return ['', `Spread: ${fmtFull(gap)}  (top is ${pct.toFixed(0)}% above bottom)`];
-              }
-            }}},
-        scales:{ x:{grid:{display:false}, ticks:{callback:(v)=>'Y'+v}}, y:{grid:{color:palette.grid}, ticks:{callback:(v)=>fmtCur(v,0)}} }
-      }
-    });
-  } else {
-    charts.compare.data.labels = xs;
-    charts.compare.data.datasets = datasets;
-    charts.compare.update('none');
-  }
 }
 
 function phaseColor(i, len){
@@ -1206,26 +1365,45 @@ function renderPhases(sc){
     const div = document.createElement('div');
     div.className = 'phase';
     if (colorKey) div.setAttribute('data-color', colorKey);
-    const contribs = p.monthlyDeposit*12*(p.endYear-p.startYear) * (p.depositGrowthPct===0 ? 1 : ((Math.pow(1+p.depositGrowthPct/100, p.endYear-p.startYear)-1)/(p.depositGrowthPct/100*(p.endYear-p.startYear))));
+    const freq = p.depositFreq || 'monthly';
+    const short = freqShort(p);
+    const monthlyEq = monthlyOf(p);
+    // Total contributions using monthly-equivalent × 12 × duration, with escalation series
+    const years = (p.endYear - p.startYear);
+    const g = p.depositGrowthPct/100;
+    const escFactor = g === 0 ? years : ((Math.pow(1+g, years)-1)/g);
+    const contribs = monthlyEq * 12 * escFactor;
+    const freqSub = freq === 'monthly' ? '' : ` <small style="color:var(--text-faint)">≈ ${fmtCur(monthlyEq,0)}/mo</small>`;
     div.innerHTML = `
       <div class="phase-head">
         <div class="phase-title">Phase ${i+1} <small>Years ${p.startYear} – ${p.endYear}</small></div>
-        <div class="phase-amt">${fmtCur(p.monthlyDeposit,0)}<small>/mo</small></div>
+        <div class="phase-amt">${fmtCur(p.monthlyDeposit,0)}<small>${short}</small></div>
       </div>
       <div class="phase-meta">
         <span>Rate <b>${p.annualReturnPct}%</b></span>·
         <span>Grow <b>${p.depositGrowthPct}%/yr</b></span>·
-        <span>Contribs <b>${fmtCur(contribs,0)}</b></span>
+        <span>Contribs <b>${fmtCur(contribs,0)}</b></span>${freqSub}
       </div>
       <div class="phase-edit">
         <div class="row row3">
           <div><label>Start year</label><input class="input" type="number" data-pfield="startYear" value="${p.startYear}" min="0"></div>
           <div><label>End year</label><input class="input" type="number" data-pfield="endYear" value="${p.endYear}" min="1"></div>
-          <div><label>Monthly $</label><input class="input" type="number" data-pfield="monthlyDeposit" value="${p.monthlyDeposit}" step="100"></div>
+          <div><label>Deposit cadence</label>
+            <select class="input" data-pfield="depositFreq">
+              <option value="monthly"  ${freq==='monthly'?'selected':''}>Monthly</option>
+              <option value="biweekly" ${freq==='biweekly'?'selected':''}>Biweekly (every 2 wks)</option>
+              <option value="weekly"   ${freq==='weekly'?'selected':''}>Weekly</option>
+              <option value="daily"    ${freq==='daily'?'selected':''}>Daily</option>
+            </select>
+          </div>
         </div>
         <div class="row">
+          <div><label>Amount per ${DEPOSIT_FREQ[freq].label === 'monthly' ? 'month' : DEPOSIT_FREQ[freq].label.replace('ly','')}</label><input class="input" type="number" data-pfield="monthlyDeposit" value="${p.monthlyDeposit}" step="100"></div>
           <div><label>Return % p.a.</label><input class="input" type="number" data-pfield="annualReturnPct" value="${p.annualReturnPct}" step="0.1"></div>
+        </div>
+        <div class="row">
           <div><label>Deposit escalation %/yr</label><input class="input" type="number" data-pfield="depositGrowthPct" value="${p.depositGrowthPct}" step="0.5"></div>
+          <div style="display:flex;align-items:flex-end"><div style="font-size:11px;color:var(--text-dim);line-height:1.5">${freq==='monthly' ? `~${fmtCur(monthlyEq*12,0)}/yr` : `${fmtCur(p.monthlyDeposit,0)}${short} ≈ <b style="color:var(--text)">${fmtCur(monthlyEq,0)}/mo</b> · ${fmtCur(monthlyEq*12,0)}/yr`}</div></div>
         </div>
         <div style="display:flex;justify-content:flex-end"><button class="delete" data-pdelete="${p.id}">Delete phase</button></div>
       </div>
@@ -1235,16 +1413,31 @@ function renderPhases(sc){
       div.classList.toggle('editing');
     });
     div.querySelectorAll('[data-pfield]').forEach(inp=>{
-      inp.addEventListener('input', ()=>{
+      const handler = ()=>{
         const key = inp.dataset.pfield;
+        if (key === 'depositFreq'){
+          markDirty();
+          p[key] = inp.value;
+          // Re-render editor so labels/readouts update, but keep it open
+          const wasEditing = div.classList.contains('editing');
+          renderPhases(sc);
+          if (wasEditing){
+            const ph = $('#phasesList').children[i];
+            if (ph) ph.classList.add('editing');
+          }
+          debouncedQuickRender();
+          return;
+        }
         const val = parseFloat(inp.value);
-        if (isFinite(val)) { p[key] = val; debouncedQuickRender(); }
-      });
+        if (isFinite(val)) { markDirty(); p[key] = val; debouncedQuickRender(); }
+      };
+      inp.addEventListener(inp.tagName === 'SELECT' ? 'change' : 'input', handler);
     });
     const delBtn = div.querySelector('[data-pdelete]');
     if (delBtn){
       delBtn.addEventListener('click', (e)=>{
         e.stopPropagation();
+        markDirty();
         state.phases = state.phases.filter(x => x.id !== p.id);
         render();
       });
@@ -1267,12 +1460,14 @@ function renderLumpSums(){
     `;
     row.querySelectorAll('[data-lfield]').forEach(inp=>{
       inp.addEventListener('input', ()=>{
+        markDirty();
         const key = inp.dataset.lfield;
         ls[key] = (key==='label') ? inp.value : parseFloat(inp.value);
         debouncedQuickRender();
       });
     });
     row.querySelector('.x').addEventListener('click', ()=>{
+      markDirty();
       state.lumpSums = state.lumpSums.filter(x => x.id !== ls.id);
       render();
     });
@@ -1304,7 +1499,7 @@ function renderTimeline(sc, r){
     const seg = document.createElement('div');
     seg.className = `timeline-phase ${phaseCls}`;
     seg.innerHTML = s.monthlyDeposit
-      ? `${fmtCur(s.monthlyDeposit,0)}/mo<small>${s.startYear}–${s.endYear}y</small>`
+      ? `${fmtCur(s.monthlyDeposit,0)}${freqShort(s)}<small>${s.startYear}–${s.endYear}y</small>`
       : `<span style="opacity:.8">no deposit</span><small>${s.startYear}–${s.endYear}y</small>`;
     track.appendChild(seg);
   });
@@ -1334,8 +1529,24 @@ function renderTimeline(sc, r){
 }
 
 function renderBreakdown(sc, r){
+  const head = $('#breakdownHead');
   const host = $('#yearTable');
+  const heading = $('#breakdownHeading');
+  if (!host) return;
   host.innerHTML = '';
+  if (breakdownGranularity === 'monthly'){
+    if (heading) heading.textContent = 'Monthly breakdown';
+    if (head) head.innerHTML = `<tr><th>Month</th><th>Year.Mo</th><th>Phase</th><th>Deposited</th><th>Interest</th><th>Balance</th><th>Real value</th></tr>`;
+    renderMonthlyBreakdown(sc, r, host);
+  } else {
+    if (heading) heading.textContent = 'Yearly breakdown';
+    if (head) head.innerHTML = `<tr><th>Year</th><th>Phase</th><th>Deposited</th><th>Interest</th><th>Balance</th><th>Real value</th><th>After‑tax</th></tr>`;
+    renderYearlyBreakdown(sc, r, host);
+  }
+}
+
+function renderYearlyBreakdown(sc, r, host){
+  const frag = document.createDocumentFragment();
   r.yearly.forEach(y => {
     const real = sc.inflationOn ? y.balance/Math.pow(1+sc.inflationPct/100, y.year) : y.balance;
     let afterTax = y.balance;
@@ -1354,53 +1565,120 @@ function renderBreakdown(sc, r){
       <td>${fmtFull(real)}</td>
       <td>${fmtFull(afterTax)}</td>
     `;
-    host.appendChild(tr);
+    frag.appendChild(tr);
+  });
+  host.appendChild(frag);
+}
+
+function renderMonthlyBreakdown(sc, r, host){
+  const frag = document.createDocumentFragment();
+  const s = r.series;
+  // Walk series starting from m=1; row per month, plus a soft divider row at each year boundary.
+  let prev = s[0];
+  for (let i=1; i<s.length; i++){
+    const cur = s[i];
+    const m = cur.m;
+    const yearIdx = Math.ceil(m/12);           // retirement year (1-indexed for labels)
+    const monthOfYear = ((m-1) % 12) + 1;
+    const phase = findPhase(sc.phases, Math.floor((m-1)/12));
+    const phaseName = phase ? `Phase ${sc.phases.findIndex(p=>p.id===phase.id)+1}` : '—';
+    const deposited = cur.contrib - prev.contrib;        // includes lump-sums that hit this month
+    const balDelta = cur.balance - prev.balance;
+    const interest = balDelta - deposited;
+    const real = sc.inflationOn ? cur.balance/Math.pow(1+sc.inflationPct/100, m/12) : cur.balance;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${m}</td>
+      <td>Y${yearIdx-1}.${String(monthOfYear).padStart(2,'0')}</td>
+      <td><span style="color:var(--purple)">● ${phaseName}</span></td>
+      <td>${deposited>0 ? fmtFull(deposited) : '—'}</td>
+      <td class="${interest>=0?'up':'dn'}">${fmtFull(interest)}</td>
+      <td><b>${fmtFull(cur.balance)}</b></td>
+      <td>${fmtFull(real)}</td>
+    `;
+    // Highlight the row that closes a year
+    if (m % 12 === 0) tr.classList.add('year-row');
+    frag.appendChild(tr);
+    prev = cur;
+  }
+  host.appendChild(frag);
+}
+
+function renderScenarioPills(){ renderPortfolios(); }
+
+function renderPortfolios(){
+  const host = $('#portfoliosList');
+  const empty = $('#portfoliosEmpty');
+  const count = $('#portfolioCount');
+  if (!host) return;
+  host.innerHTML = '';
+  if (count) count.textContent = scenarios.length === 0
+    ? 'none yet'
+    : `${scenarios.length} saved`;
+  if (empty) empty.hidden = scenarios.length > 0;
+
+  scenarios.forEach(s => {
+    const card = document.createElement('div');
+    const isLive = s.id === state.id;
+    card.className = 'portfolio-item' + (isLive ? ' live' : '');
+    card.style.setProperty('--pf-color', s.color || palette.cyan);
+    // Quick stats snapshot
+    const phaseCount = (s.phases || []).length;
+    const totalMo = (s.phases || [])[0]?.monthlyDeposit || 0;
+    const dur = s.durationYears || 0;
+    const cur = (CURRENCIES[s.currency] || CURRENCIES.USD).code;
+    card.innerHTML = `
+      <div class="pf-head">
+        <div class="pf-name">${escapeHtml(s.name)}${isLive ? '<span class="pf-live-tag">live</span>' : ''}</div>
+      </div>
+      <div class="pf-meta">
+        <span><b>${dur}</b> yrs</span>
+        <span>·</span>
+        <span><b>${phaseCount}</b> phase${phaseCount===1?'':'s'}</span>
+        <span>·</span>
+        <span>${cur}</span>
+        <span>·</span>
+        <span>Start ${cur === 'INR' || cur === 'PKR' ? '' : ''}<b>${fmtCurSc(s, s.startingBalance||0)}</b></span>
+      </div>
+      <div class="pf-actions">
+        <button class="pf-load">📂 Load</button>
+        <button class="pf-more">⋯ More</button>
+      </div>`;
+    // Click card body also loads
+    card.addEventListener('click', e => {
+      const tgt = e.target;
+      if (tgt.closest('.pf-more')){ e.stopPropagation(); openScenarioMenu(s, card); return; }
+      if (tgt.closest('.pf-load') || tgt.classList.contains('portfolio-item') || tgt.closest('.pf-head') || tgt.closest('.pf-meta')){
+        loadScenarioIntoEditor(s);
+      }
+    });
+    host.appendChild(card);
   });
 }
 
-function renderScenarioPills(){
-  const host = $('#scenPills');
-  host.innerHTML = '';
-  scenarios.forEach(s => {
-    const pill = document.createElement('div');
-    const isCurrent = s.id === state.id;
-    pill.className = 'scen-pill'
-      + (compareIds.includes(s.id) ? ' active' : '')
-      + (isCurrent ? ' current' : '');
-    pill.title = isCurrent ? 'This is the currently loaded scenario' : 'Click to toggle on comparison chart';
-    pill.innerHTML = `
-      <span class="sw" style="background:${s.color}"></span>
-      <span class="scen-name">${escapeHtml(s.name)}${isCurrent ? ' <small style="color:var(--cyan);font-weight:700">· live</small>' : ''}</span>
-      <span class="dots" title="More…">⋯</span>
-      <span class="x" title="Delete">✕</span>`;
-    pill.addEventListener('click', (e)=>{
-      if (e.target.classList.contains('x')){
-        if (!confirm(`Delete scenario "${s.name}"?`)) return;
-        scenarios = scenarios.filter(x => x.id !== s.id);
-        compareIds = compareIds.filter(id => id !== s.id);
-        persistScenarios(); persistCompareIds(); render();
-        toast(`Deleted "${s.name}"`);
-        return;
-      }
-      if (e.target.classList.contains('dots')){
-        e.stopPropagation();
-        openScenarioMenu(s, pill);
-        return;
-      }
-      if (compareIds.includes(s.id)) compareIds = compareIds.filter(id => id !== s.id);
-      else compareIds.push(s.id);
-      persistCompareIds(); render();
-    });
-    host.appendChild(pill);
-  });
-  const add = document.createElement('div');
-  add.className = 'scen-pill';
-  add.style.borderStyle = 'dashed';
-  add.style.color = 'var(--text-dim)';
-  add.innerHTML = '＋ Save current';
-  add.title = 'Save the current working scenario as a named snapshot';
-  add.addEventListener('click', saveCurrent);
-  host.appendChild(add);
+// Format a currency value using an arbitrary scenario's currency (without mutating current state)
+function fmtCurSc(sc, n){
+  const prevCur = state.currency;
+  try {
+    // Use a lightweight approach: if same currency, just use fmtCur
+    if (sc.currency === prevCur || !sc.currency) return fmtCur(n);
+    // Temporarily use the scenario's currency for this single format
+    const saved = state.currency;
+    state.currency = sc.currency;
+    const out = fmtCur(n);
+    state.currency = saved;
+    return out;
+  } catch(e){ return fmtCur(n); }
+}
+
+function loadScenarioIntoEditor(s){
+  if (s.id === state.id){ toast('Already loaded'); return; }
+  state = clone(s);
+  persistState(); hydrateInputs(); render();
+  toast(`Loaded "${s.name}"`);
+  // Scroll to top so user sees the reloaded config
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function escapeHtml(s){
@@ -1422,10 +1700,10 @@ function openScenarioMenu(s, anchorEl){
   menu.style.left = (window.scrollX + Math.max(8, rect.left)) + 'px';
   menu.innerHTML = `
     <button data-act="load">📂 Load into editor</button>
-    <button data-act="dup">🧬 Duplicate</button>
+    <button data-act="update">💾 Overwrite with current</button>
     <button data-act="rename">✏️ Rename</button>
-    <button data-act="color">🎨 Change color</button>
-    <button data-act="update">💾 Update from current</button>
+    <button data-act="dup">🧬 Duplicate</button>
+    <button data-act="color">🎨 Cycle color</button>
     <hr>
     <button data-act="export">📤 Export as JSON</button>
     <button data-act="share">🔗 Copy share link</button>
@@ -1451,21 +1729,14 @@ function closeScenarioMenu(){
 }
 function handleScenarioAction(act, s){
   if (act === 'load'){
-    if (s.id === state.id){ toast('Already loaded'); return; }
-    // Confirm if current has unsaved changes (simple: just ask)
-    const ok = confirm(`Load "${s.name}" into the editor? Your current working scenario will be replaced (saved scenarios untouched).`);
-    if (!ok) return;
-    state = clone(s);
-    persistState(); render();
-    toast(`Loaded "${s.name}"`);
+    loadScenarioIntoEditor(s);
   } else if (act === 'dup'){
     const copy = clone(s);
     copy.id = uid();
     copy.name = `${s.name} (copy)`;
     copy.color = COMPARE_COLORS[scenarios.length % COMPARE_COLORS.length];
     scenarios.push(copy);
-    compareIds.push(copy.id);
-    persistScenarios(); persistCompareIds(); render();
+    persistScenarios(); render();
     toast(`Duplicated as "${copy.name}"`);
   } else if (act === 'rename'){
     const next = prompt('Rename scenario:', s.name);
@@ -1500,8 +1771,7 @@ function handleScenarioAction(act, s){
   } else if (act === 'delete'){
     if (!confirm(`Delete "${s.name}"?`)) return;
     scenarios = scenarios.filter(x => x.id !== s.id);
-    compareIds = compareIds.filter(id => id !== s.id);
-    persistScenarios(); persistCompareIds(); render();
+    persistScenarios(); render();
     toast(`Deleted "${s.name}"`);
   }
 }
@@ -1513,7 +1783,10 @@ function renderGoalBanner(solved, r){
   const b = $('#goalBanner');
   if (solved !== null){
     b.classList.add('on');
-    b.innerHTML = `🎯 Goal‑seek: to reach <b>${fmtFull(state.goalSeek.targetFinalBalance)}</b> in ${state.durationYears} years, deposit <b>${fmtFull(solved)}/mo</b> during phase 1. (All other phases held constant.)`;
+    const ph1 = state.phases[0] || {};
+    const short = freqShort(ph1);
+    const fL = (DEPOSIT_FREQ[ph1.depositFreq||'monthly']||DEPOSIT_FREQ.monthly).label;
+    b.innerHTML = `🎯 Goal‑seek: to reach <b>${fmtFull(state.goalSeek.targetFinalBalance)}</b> in ${state.durationYears} years, deposit <b>${fmtFull(solved)}${short}</b> ${fL} during phase 1. (All other phases held constant.)`;
   } else {
     b.classList.remove('on');
   }
@@ -1521,18 +1794,150 @@ function renderGoalBanner(solved, r){
 
 function renderSWP(sc, r){
   const box = $('#swpResult');
-  if (!sc.withdrawal.enabled){ box.classList.remove('on'); return; }
+  const card = $('#swpCard');
+  if (!sc.withdrawal.enabled){
+    box.classList.remove('on');
+    if (card) card.hidden = true;
+    return;
+  }
   const swp = simulateSWP(r.finalBalance, sc.withdrawal, sc.inflationPct);
   box.classList.add('on');
-  $('#swpTotal').textContent = fmtFull(swp.totalWithdrawn);
-  $('#swpEnd').textContent = fmtFull(swp.finalBalance);
-  const depRow = $('#swpDepRow');
+  $('#swpTotal').innerHTML = `${fmtCur(swp.totalWithdrawn,1)}<small>${fmtFull(swp.totalWithdrawn)}</small>`;
+  $('#swpPeak').innerHTML = `${fmtCur(swp.peakMonthly,1)}/mo<small>${fmtFull(swp.peakMonthly)}/mo</small>`;
+  $('#swpEnd').innerHTML = `${fmtCur(swp.finalBalance,1)}<small>${fmtFull(swp.finalBalance)}</small>`;
   if (swp.depletedAtMonth){
     const yrs = (swp.depletedAtMonth/12).toFixed(1);
     $('#swpDep').innerHTML = `<span class="warn">depleted at year ${yrs}</span>`;
   } else {
-    $('#swpDep').innerHTML = `<span class="ok">${sc.withdrawal.durationYears} yrs + ${fmtFull(swp.finalBalance)} left</span>`;
+    $('#swpDep').innerHTML = `<span class="ok">${sc.withdrawal.durationYears} yrs + ${fmtCur(swp.finalBalance,1)} left</span>`;
   }
+  if (card) card.hidden = false;
+  renderSWPChart(sc, swp, r.finalBalance);
+}
+
+/* Drawdown chart — balance line + monthly withdrawal bars per retirement year */
+let currentSwp = null;
+function renderSWPChart(sc, swp, startBal){
+  currentSwp = swp;
+  const yrLabels = [0, ...swp.yearly.map(y => y.year)];
+  const balLine = [startBal, ...swp.yearly.map(y => y.balance)];
+  // Monthly withdrawal — use last month of each year for the bar height
+  const monthlyOut = [0, ...swp.yearly.map(y => {
+    // Find max withdrawal during that year for a more representative bar
+    const yEnd = y.year * 12;
+    const yStart = yEnd - 11;
+    let m = 0;
+    for (let i = yStart; i <= yEnd; i++){
+      const e = swp.series[i]; if (e && e.monthlyOut > m) m = e.monthlyOut;
+    }
+    return m;
+  })];
+  const depYear = swp.depletedAtMonth ? +(swp.depletedAtMonth/12).toFixed(1) : null;
+
+  if (!charts.swp){
+    const ctx = $('#swp').getContext('2d');
+    charts.swp = new Chart(ctx, {
+      data:{
+        labels: yrLabels,
+        datasets:[
+          { type:'line', label:'Pot balance', data: balLine, yAxisID:'yBal',
+            borderColor: palette.purple,
+            backgroundColor: ctxGrad(ctx,'rgba(124,58,237,.4)','rgba(219,39,119,.05)'),
+            fill:true, tension:.35, pointRadius:0, pointHoverRadius:6, pointHitRadius:20,
+            pointBackgroundColor:palette.purple, pointBorderColor:'#fff', pointBorderWidth:2,
+            borderWidth:2, order:2 },
+          { type:'bar', label:'Monthly withdrawal', data: monthlyOut, yAxisID:'yWd',
+            backgroundColor:'rgba(217,119,6,.7)', hoverBackgroundColor:'rgba(217,119,6,1)',
+            borderRadius:4, order:1 }
+        ]
+      },
+      plugins:[crosshairPlugin],
+      options:{
+        responsive:true, maintainAspectRatio:false, animation:{duration:400},
+        interaction:{ mode:'index', intersect:false, axis:'x' },
+        onHover:(evt, active)=>{ updateSwpHoverReadout(active); },
+        plugins:{ legend:{display:false}, tooltip:{
+          enabled:true, mode:'index', intersect:false,
+          backgroundColor:palette.tooltipBg, titleColor:palette.tooltipText, bodyColor:palette.tooltipText,
+          borderColor:palette.border, borderWidth:1, padding:12, cornerRadius:10,
+          titleFont:{weight:'700', size:13}, bodyFont:{size:12}, boxPadding:6,
+          callbacks:{
+            title:(c)=>{
+              const yr = Number(c[0].label);
+              const ye = currentSwp?.yearly[yr-1];
+              return ye?.phase ? `Year ${yr} of retirement — ${ye.phase}` : `Year ${yr} of retirement`;
+            },
+            label:(c)=>` ${c.dataset.label}: ${fmtFull(c.parsed.y)}`,
+            afterBody:(items)=>{
+              const yr = Number(items[0].label);
+              if (yr===0 || !currentSwp) return '';
+              const ye = currentSwp.yearly[yr-1]; if (!ye) return '';
+              const lines = [
+                ``,
+                `This year withdrew: ${fmtFull(ye.withdrawn)}`,
+                `Pot at year-end: ${fmtFull(ye.balance)}`
+              ];
+              if (currentSwp.depletedAtMonth && yr*12 >= currentSwp.depletedAtMonth){
+                lines.push(`⚠ Pot depleted at year ${(currentSwp.depletedAtMonth/12).toFixed(1)}`);
+              }
+              return lines;
+            }
+          }
+        }},
+        scales:{
+          x:{ grid:{display:false}, ticks:{ callback:(_,i)=>'Y'+yrLabels[i] } },
+          yBal:{ position:'left', grid:{color:palette.grid}, ticks:{ callback:(v)=>fmtCur(v,0) },
+                 title:{display:true, text:'Balance', font:{size:10, weight:'600'}, color:palette.textDim} },
+          yWd:{ position:'right', grid:{display:false}, ticks:{ callback:(v)=>fmtCur(v,0) },
+                title:{display:true, text:'Monthly out', font:{size:10, weight:'600'}, color:palette.textDim} }
+        }
+      }
+    });
+  } else {
+    charts.swp.data.labels = yrLabels;
+    charts.swp.data.datasets[0].data = balLine;
+    charts.swp.data.datasets[1].data = monthlyOut;
+    charts.swp.update('none');
+  }
+  $('#swpChartSub').textContent = depYear
+    ? `pot lasts ${depYear} yrs · drawdown over ${sc.withdrawal.durationYears} yrs`
+    : `${sc.withdrawal.durationYears}-yr drawdown · ${fmtFull(swp.finalBalance)} left`;
+}
+
+let swpHoverHideTimer = null;
+function resetSwpHoverReadout(){
+  const el = document.getElementById('swpHoverReadout'); if (!el) return;
+  el.innerHTML = `<span class="hr-hint">Hover the chart to inspect any year of retirement</span>`;
+}
+function updateSwpHoverReadout(active){
+  const el = document.getElementById('swpHoverReadout'); if (!el) return;
+  if (!active || !active.length){
+    clearTimeout(swpHoverHideTimer);
+    swpHoverHideTimer = setTimeout(resetSwpHoverReadout, 150);
+    return;
+  }
+  clearTimeout(swpHoverHideTimer);
+  const idx = active[0].index;
+  const swp = currentSwp; if (!swp) return;
+  const year = idx; // labels are 0..N
+  if (year === 0){
+    const startBal = (swp.series[0]?.balance) || 0;
+    el.innerHTML = `
+      <span class="hr-year">Y0</span>
+      <div class="hr-item"><span class="hr-label">Pot at start</span><span class="hr-val purple">${fmtFull(startBal)}</span></div>
+      <span class="hr-phase">retirement begins</span>
+    `;
+    return;
+  }
+  const ye = swp.yearly[year-1]; if (!ye) return;
+  const monthly = ye.withdrawn / 12;
+  el.innerHTML = `
+    <span class="hr-year">Y${year}</span>
+    <div class="hr-item"><span class="hr-label">Balance</span><span class="hr-val purple">${fmtFull(ye.balance)}</span></div>
+    <div class="hr-item"><span class="hr-label">Withdrew</span><span class="hr-val">${fmtFull(ye.withdrawn)}</span></div>
+    <div class="hr-item"><span class="hr-label">Monthly</span><span class="hr-val green">${fmtFull(monthly)}</span></div>
+    <span class="hr-phase">${ye.phase || ''}</span>
+  `;
 }
 
 /* ---------- input binding ---------- */
@@ -1544,8 +1949,10 @@ function $$(sel){ return document.querySelectorAll(sel); }
 function bindInputs(){
   // Currency
   $('#currency').addEventListener('change', (e)=>{
+    markDirty();
     state.currency = e.target.value;
     updateCurrencyUI();
+    renderWithdrawalPhases();  // phase cards embed the currency symbol — refresh
     render();
   });
 
@@ -1564,31 +1971,85 @@ function bindInputs(){
 
   // Goal seek
   $('#tglGoal').addEventListener('click', ()=>{
+    markDirty();
     state.goalSeek.enabled = !state.goalSeek.enabled;
     $('#tglGoal').classList.toggle('on', state.goalSeek.enabled);
     if (state.goalSeek.enabled){ setMode('goal'); }
     render();
   });
   $('#goalTarget').addEventListener('input', (e)=>{
-    const v = parseFloat(e.target.value); if (isFinite(v)) state.goalSeek.targetFinalBalance = v; debouncedRender();
+    const v = parseFloat(e.target.value); if (isFinite(v)) { markDirty(); state.goalSeek.targetFinalBalance = v; debouncedRender(); }
   });
 
   // SWP
   $('#tglSWP').addEventListener('click', ()=>{
+    markDirty();
     state.withdrawal.enabled = !state.withdrawal.enabled;
     $('#tglSWP').classList.toggle('on', state.withdrawal.enabled);
     if (state.withdrawal.enabled){ setMode('swp'); }
     render();
   });
-  ['swpAmount:monthlyAmount','swpDuration:durationYears','swpEscalate:escalatePct','swpReturn:postRetireReturnPct'].forEach(pair=>{
+  ['swpAmount:monthlyAmount','swpDuration:durationYears','swpEscalate:escalatePct','swpReturn:postRetireReturnPct','swpPct:percentagePct'].forEach(pair=>{
     const [selId, key] = pair.split(':');
-    $('#'+selId).addEventListener('input', (e)=>{
-      const v = parseFloat(e.target.value); if (isFinite(v)) state.withdrawal[key] = v; debouncedRender();
+    $('#'+selId)?.addEventListener('input', (e)=>{
+      const v = parseFloat(e.target.value); if (isFinite(v)) { markDirty(); state.withdrawal[key] = v; debouncedRender(); }
     });
+  });
+  // Strategy segmented control
+  $$('#swpStrategySeg button').forEach(b => b.addEventListener('click', ()=>{
+    const s = b.dataset.strategy;
+    markDirty();
+    state.withdrawal.strategy = s;
+    // If switching to "phases" with no phases yet, seed front-loaded preset for instant feedback
+    if (s === 'phases' && (!state.withdrawal.phases || state.withdrawal.phases.length === 0)){
+      state.withdrawal.phases = frontLoadedPreset();
+    }
+    updateStrategySeg(s);
+    renderWithdrawalPhases();
+    render();
+  }));
+  // % rule basis selector
+  $('#swpPctMode')?.addEventListener('change', (e)=>{
+    markDirty();
+    state.withdrawal.percentageMode = e.target.value;
+    debouncedRender();
+  });
+  // % rule presets (4 / 5 / 6 / 8)
+  $$('[data-pct-preset]').forEach(b => b.addEventListener('click', ()=>{
+    const v = parseFloat(b.dataset.pctPreset); if (!isFinite(v)) return;
+    markDirty();
+    state.withdrawal.percentagePct = v;
+    $('#swpPct').value = v;
+    debouncedRender();
+  }));
+  // Phases editor controls
+  $('#swpFrontLoadedPreset')?.addEventListener('click', ()=>{
+    markDirty();
+    state.withdrawal.phases = frontLoadedPreset();
+    renderWithdrawalPhases();
+    render();
+  });
+  $('#swpAddPhase')?.addEventListener('click', ()=>{
+    markDirty();
+    const phs = state.withdrawal.phases || (state.withdrawal.phases = []);
+    const last = phs[phs.length-1];
+    const start = last ? last.endYear : 0;
+    const end = start + 10;
+    phs.push({ id: uid(), startYear:start, endYear:end, monthlyAmount:3000, escalatePct:2, label:'' });
+    renderWithdrawalPhases();
+    render();
+  });
+  $('#swpClearPhases')?.addEventListener('click', ()=>{
+    if (!confirm('Clear all withdrawal phases?')) return;
+    markDirty();
+    state.withdrawal.phases = [];
+    renderWithdrawalPhases();
+    render();
   });
 
   // Lump sums
   $('#addLump').addEventListener('click', ()=>{
+    markDirty();
     state.lumpSums.push({ id:uid(), atYear: Math.min(1, state.durationYears), atMonth:1, amount:5000, label:'Bonus' });
     render();
   });
@@ -1599,9 +2060,20 @@ function bindInputs(){
     const start = last ? last.endYear : 0;
     const end = Math.min(state.durationYears, start+5);
     if (end<=start){ toast('Extend duration to add more phases'); return; }
-    state.phases.push({ id:uid(), startYear:start, endYear:end, monthlyDeposit:500, depositGrowthPct:0, annualReturnPct:state.defaultReturnPct });
+    markDirty();
+    state.phases.push({ id:uid(), startYear:start, endYear:end, monthlyDeposit:500, depositFreq:'monthly', depositGrowthPct:0, annualReturnPct:state.defaultReturnPct });
     render();
   });
+
+  // Breakdown granularity toggle
+  $$('#breakdownSeg button').forEach(b => b.addEventListener('click', ()=>{
+    const g = b.dataset.bd;
+    if (g === breakdownGranularity) return;
+    breakdownGranularity = g;
+    $$('#breakdownSeg button').forEach(x => x.classList.toggle('on', x.dataset.bd === g));
+    // Re-render only the breakdown; no need to re-run simulate
+    render({ skipEditors:true });
+  }));
 
   // Tabs
   $$('#tabs .tab').forEach(btn => btn.addEventListener('click', ()=>{
@@ -1617,31 +2089,50 @@ function bindInputs(){
   // Top actions
   $('#saveBtn').addEventListener('click', saveCurrent);
   $('#saveCurrentBtn').addEventListener('click', saveCurrent);
+  $('#saveCurrentBtn2')?.addEventListener('click', saveCurrent);
   $('#shareBtn').addEventListener('click', share);
   $('#csvBtn').addEventListener('click', exportCSV);
   $('#printBtn').addEventListener('click', ()=>window.print());
-  $('#resetBtn').addEventListener('click', ()=>{ if (confirm('Reset current scenario to defaults?')){ state = defaultScenario(); hydrateInputs(); render(); } });
-  $('#loadDefaults').addEventListener('click', (e)=>{ e.preventDefault(); state = defaultScenario(); hydrateInputs(); render(); });
+  $('#resetBtn').addEventListener('click', ()=>{ if (confirm('Reset current scenario to defaults?')){ state = defaultScenario(); persistState(); hydrateInputs(); render(); } });
+  $('#loadDefaults').addEventListener('click', (e)=>{ e.preventDefault(); state = defaultScenario(); persistState(); hydrateInputs(); render(); });
+
+  // Scenario toolbar: import / export current / export all
+  $('#importScenBtn')?.addEventListener('click', triggerImport);
+  $('#exportCurrentBtn')?.addEventListener('click', exportCurrentJSON);
+  $('#exportAllBtn')?.addEventListener('click', exportAllJSON);
+  $('#importFile')?.addEventListener('change', handleImportFile);
+
+  // Drag & drop a JSON config anywhere on the page to import
+  ['dragover','drop'].forEach(ev => document.addEventListener(ev, e => {
+    if (ev === 'dragover'){ e.preventDefault(); return; }
+    const f = e.dataTransfer?.files?.[0];
+    if (!f || !/\.json$/i.test(f.name)) return;
+    e.preventDefault();
+    const reader = new FileReader();
+    reader.onload = ev2 => importConfigFromText(ev2.target.result);
+    reader.readAsText(f);
+  }));
 }
 
 function bindNum(sel, key){
   const el = $(sel);
-  el.addEventListener('input', (e)=>{ const v = parseFloat(e.target.value); if (isFinite(v)) { state[key]=v; debouncedRender(); } });
+  el.addEventListener('input', (e)=>{ const v = parseFloat(e.target.value); if (isFinite(v)) { markDirty(); state[key]=v; debouncedRender(); } });
 }
 function bindSelect(sel, key){
-  $(sel).addEventListener('change', (e)=>{ state[key]=e.target.value; render(); });
+  $(sel).addEventListener('change', (e)=>{ markDirty(); state[key]=e.target.value; render(); });
 }
 function bindRange(sel, key, labelSel){
   const el = $(sel);
   el.addEventListener('input', (e)=>{
     const v = parseFloat(e.target.value);
+    markDirty();
     state[key] = v;
     if (labelSel) $(labelSel).textContent = v.toFixed(1);
     debouncedRender();
   });
 }
 function bindToggle(sel, key){
-  $(sel).addEventListener('click', ()=>{ state[key] = !state[key]; $(sel).classList.toggle('on', state[key]); render(); });
+  $(sel).addEventListener('click', ()=>{ markDirty(); state[key] = !state[key]; $(sel).classList.toggle('on', state[key]); render(); });
 }
 
 function updateCurrencyUI(){
@@ -1680,6 +2171,86 @@ function hydrateInputs(){
   $('#swpDuration').value = state.withdrawal.durationYears;
   $('#swpEscalate').value = state.withdrawal.escalatePct;
   $('#swpReturn').value = state.withdrawal.postRetireReturnPct;
+  $('#swpPct').value = state.withdrawal.percentagePct;
+  $('#swpPctMode').value = state.withdrawal.percentageMode || 'initial';
+  updateStrategySeg(state.withdrawal.strategy || 'fixed');
+  renderWithdrawalPhases();
+}
+
+/* Strategy segmented-control highlight + block visibility */
+function updateStrategySeg(strategy){
+  $$('#swpStrategySeg button').forEach(b => b.classList.toggle('on', b.dataset.strategy === strategy));
+  $$('[data-strategy-block]').forEach(el => el.hidden = (el.dataset.strategyBlock !== strategy));
+}
+
+/* Render the phases editor inside the Custom tab */
+function renderWithdrawalPhases(){
+  const list = $('#swpPhasesList');
+  if (!list) return;
+  const phases = state.withdrawal.phases || [];
+  if (phases.length === 0){
+    list.innerHTML = `<div class="wphase-empty">No phases yet. Use <b>⚡ Front-loaded preset</b> or <b>+ Add phase</b> to start.</div>`;
+    return;
+  }
+  list.innerHTML = '';
+  const cur = currentCurrency();
+  const padLeft = Math.max(30, 14 + cur.symbol.length * 8);
+  phases.forEach((p, idx) => {
+    const card = document.createElement('div');
+    card.className = 'wphase-card';
+    card.innerHTML = `
+      <div class="wphase-head">
+        <span class="wphase-tag">Phase ${idx+1}${p.label ? ' · ' + p.label : ''}</span>
+        <button class="wphase-del" title="Remove this phase" data-del="${p.id}">✕</button>
+      </div>
+      <div class="input-row">
+        <div class="field"><label>Start year</label><div class="input-suffix" data-suffix="yr"><input class="input" type="number" min="0" max="80" data-wp="${p.id}" data-k="startYear" value="${p.startYear}"></div></div>
+        <div class="field"><label>End year</label><div class="input-suffix" data-suffix="yr"><input class="input" type="number" min="0" max="80" data-wp="${p.id}" data-k="endYear" value="${p.endYear}"></div></div>
+      </div>
+      <div class="input-row">
+        <div class="field"><label>Monthly amount</label><div class="input-prefix cur-prefix" data-prefix="${cur.symbol}"><input class="input" type="number" step="100" style="padding-left:${padLeft}px" data-wp="${p.id}" data-k="monthlyAmount" value="${p.monthlyAmount}"></div></div>
+        <div class="field"><label>Escalation</label><div class="input-suffix" data-suffix="%"><input class="input" type="number" step="0.1" min="0" max="15" data-wp="${p.id}" data-k="escalatePct" value="${p.escalatePct||0}"></div></div>
+      </div>
+      <div style="margin-top:6px">
+        <input class="input" type="text" placeholder="Label (e.g. Go-go years)" data-wp="${p.id}" data-k="label" value="${(p.label||'').replace(/"/g,'&quot;')}">
+      </div>
+    `;
+    list.appendChild(card);
+  });
+  // Wire inputs
+  list.querySelectorAll('[data-wp]').forEach(inp => {
+    inp.addEventListener('input', (e)=>{
+      const id = e.target.dataset.wp; const k = e.target.dataset.k;
+      const ph = (state.withdrawal.phases||[]).find(p => p.id === id); if (!ph) return;
+      markDirty();
+      if (k === 'label'){ ph[k] = e.target.value; }
+      else { const v = parseFloat(e.target.value); if (isFinite(v)) ph[k] = v; }
+      debouncedQuickRender();
+    });
+  });
+  list.querySelectorAll('[data-del]').forEach(btn => {
+    btn.addEventListener('click', (e)=>{
+      const id = e.currentTarget.dataset.del;
+      markDirty();
+      state.withdrawal.phases = (state.withdrawal.phases||[]).filter(p => p.id !== id);
+      renderWithdrawalPhases();
+      render();
+    });
+  });
+}
+
+/* Front-loaded preset — scales the baseline by a currency-appropriate factor */
+function frontLoadedPreset(){
+  const cur = currentCurrency();
+  // "Baseline" targets USD; scale up for currencies with weaker units
+  const scaleByCur = { USD:1, EUR:1, GBP:0.8, CAD:1.3, AUD:1.4, AED:3.5, SAR:3.7, INR:80, PKR:275 };
+  const scale = scaleByCur[(state.currency||'USD')] || 1;
+  const base = { go:8000, slow:5000, no:3000 };
+  return [
+    { id: uid(), startYear:0,  endYear:10, monthlyAmount: Math.round(base.go * scale),   escalatePct:2, label:'Go-go years' },
+    { id: uid(), startYear:10, endYear:20, monthlyAmount: Math.round(base.slow * scale), escalatePct:2, label:'Slow-go years' },
+    { id: uid(), startYear:20, endYear:30, monthlyAmount: Math.round(base.no * scale),   escalatePct:1, label:'No-go years' }
+  ];
 }
 
 function setMode(m){
@@ -1691,18 +2262,77 @@ function setMode(m){
 }
 
 /* ---------- actions ---------- */
+/**
+ * Detach the editor from any saved portfolio so that in-progress edits do NOT
+ * silently mutate the saved copy. The user must explicitly "Save scenario" or
+ * use the per-portfolio "Overwrite with current" to persist changes.
+ *
+ * Called from every state-mutating handler via bindInputs().
+ */
+function markDirty(){
+  if (!state.id) return;             // already unlinked — nothing to do
+  state.id = undefined;
+  // Keep the name so "Save scenario" offers it as the default (natural "Save as")
+  // but force a fresh color so the unsaved card visually differs from its origin.
+  state.color = COMPARE_COLORS[(scenarios.length) % COMPARE_COLORS.length];
+  persistState();
+  // Refresh the portfolios list so the "live" badge clears immediately
+  try { renderPortfolios(); } catch(_e){}
+}
+
 function saveCurrent(){
   const name = prompt('Name this scenario:', state.name || 'My plan');
   if (!name) return;
+  const trimmed = name.trim();
+  if (!trimmed) return;
+
+  // Name collision → prompt for explicit overwrite (preserve existing id + color)
+  const existing = scenarios.find(s =>
+    (s.name || '').trim().toLowerCase() === trimmed.toLowerCase()
+  );
+  if (existing){
+    if (!confirm(`A portfolio named "${existing.name}" already exists.\n\nOverwrite it with the current scenario?`)){
+      toast('Save cancelled');
+      return;
+    }
+    const idx = scenarios.findIndex(x => x.id === existing.id);
+    const upd = clone(state);
+    upd.id = existing.id;
+    upd.name = existing.name;      // keep original casing
+    upd.color = existing.color;
+    scenarios[idx] = upd;
+    // Re-link the editor to the overwritten portfolio so "live" badge reflects truth
+    state.id = existing.id;
+    state.name = existing.name;
+    state.color = existing.color;
+    persistScenarios(); persistState();
+    toast(`Overwrote "${existing.name}"`);
+    render();
+    setTimeout(()=> {
+      const el = document.getElementById('portfoliosList');
+      if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+    }, 120);
+    return;
+  }
+
+  // Fresh portfolio
   const saved = clone(state);
   saved.id = uid();
-  saved.name = name;
+  saved.name = trimmed;
   saved.color = COMPARE_COLORS[scenarios.length % COMPARE_COLORS.length];
   scenarios.push(saved);
-  compareIds.push(saved.id);
-  persistScenarios(); persistCompareIds();
-  toast(`Saved "${name}"`);
+  // Make the newly saved portfolio the "live" one so the user sees the match in the list
+  state.id = saved.id;
+  state.name = saved.name;
+  state.color = saved.color;
+  persistScenarios(); persistState();
+  toast(`Saved "${trimmed}"`);
   render();
+  // Scroll the new portfolio into view
+  setTimeout(()=> {
+    const el = document.getElementById('portfoliosList');
+    if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 120);
 }
 function share(){
   const hash = LZString.compressToEncodedURIComponent(JSON.stringify(state));
@@ -1740,6 +2370,153 @@ function toast(msg){
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+/* ---------- JSON config: export / import ---------- */
+const CONFIG_SCHEMA_VERSION = 1;
+const CONFIG_APP = 'CompoundX';
+
+function downloadBlob(content, filename, mime='application/json'){
+  const blob = new Blob([content], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+
+function safeFilename(s){
+  return String(s || 'scenario').replace(/[^\w\-]+/g,'_').replace(/^_+|_+$/g,'').slice(0,60) || 'scenario';
+}
+
+function exportScenarioJSON(sc){
+  const payload = {
+    app: CONFIG_APP,
+    version: CONFIG_SCHEMA_VERSION,
+    exportedAt: new Date().toISOString(),
+    kind: 'scenario',
+    scenario: sc
+  };
+  downloadBlob(JSON.stringify(payload, null, 2), `compoundx-${safeFilename(sc.name)}.json`);
+  toast(`Exported "${sc.name}"`);
+}
+
+function exportCurrentJSON(){
+  exportScenarioJSON(state);
+}
+
+function exportAllJSON(){
+  const payload = {
+    app: CONFIG_APP,
+    version: CONFIG_SCHEMA_VERSION,
+    exportedAt: new Date().toISOString(),
+    kind: 'bundle',
+    current: state,
+    scenarios: scenarios
+  };
+  const stamp = new Date().toISOString().slice(0,10);
+  downloadBlob(JSON.stringify(payload, null, 2), `compoundx-portfolios-${stamp}.json`);
+  toast(`Exported ${scenarios.length} portfolio(s)`);
+}
+
+function isValidScenarioShape(s){
+  return s && typeof s === 'object'
+    && typeof s.durationYears === 'number'
+    && Array.isArray(s.phases);
+}
+
+function normaliseImportedScenario(s, taken){
+  const copy = clone(s);
+  // Always regenerate id if missing or collides with an existing one
+  if (!copy.id || taken.has(copy.id)) copy.id = uid();
+  taken.add(copy.id);
+  // Fill missing defaults
+  const d = defaultScenario();
+  for (const k of Object.keys(d)){
+    if (!(k in copy)) copy[k] = d[k];
+  }
+  // Ensure phases + lumpSums have ids; backfill depositFreq for old exports
+  (copy.phases || []).forEach(p => { if (!p.id) p.id = uid(); if (!p.depositFreq) p.depositFreq = 'monthly'; });
+  (copy.lumpSums || []).forEach(l => { if (!l.id) l.id = uid(); });
+  // Backfill withdrawal defaults (older configs may not have strategy/phases/percentage fields)
+  const dw = d.withdrawal;
+  copy.withdrawal = copy.withdrawal || {};
+  for (const k of Object.keys(dw)){
+    if (!(k in copy.withdrawal)) copy.withdrawal[k] = dw[k];
+  }
+  (copy.withdrawal.phases || []).forEach(p => { if (!p.id) p.id = uid(); });
+  if (!copy.color) copy.color = COMPARE_COLORS[scenarios.length % COMPARE_COLORS.length];
+  if (!copy.name) copy.name = 'Imported scenario';
+  return copy;
+}
+
+function importConfigFromText(text){
+  let data;
+  try { data = JSON.parse(text); } catch(e){
+    toast('Import failed: not valid JSON'); return;
+  }
+  if (!data || typeof data !== 'object'){
+    toast('Import failed: bad file'); return;
+  }
+  if (data.app && data.app !== CONFIG_APP){
+    if (!confirm(`This file was exported by "${data.app}", not ${CONFIG_APP}. Import anyway?`)) return;
+  }
+
+  const taken = new Set(scenarios.map(s => s.id));
+  let imported = 0, skipped = 0;
+
+  const tryOne = (raw, makeLive=false) => {
+    if (!isValidScenarioShape(raw)){ skipped++; return null; }
+    const norm = normaliseImportedScenario(raw, taken);
+    scenarios.push(norm);
+    imported++;
+    if (makeLive){ state = clone(norm); }
+    return norm;
+  };
+
+  if (data.kind === 'scenario' && data.scenario){
+    tryOne(data.scenario);
+  } else if (data.kind === 'bundle'){
+    (data.scenarios || []).forEach(s => tryOne(s));
+    if (data.current && isValidScenarioShape(data.current)){
+      // Replace working scenario with imported current
+      const wc = normaliseImportedScenario(data.current, taken);
+      // Don't add to saved list unless user wants; just load into editor
+      state = clone(wc);
+    }
+  } else if (isValidScenarioShape(data)){
+    // Raw scenario object (pre-schema or hand-written)
+    tryOne(data);
+  } else if (Array.isArray(data)){
+    data.forEach(s => tryOne(s));
+  } else {
+    toast('Import failed: unrecognized format'); return;
+  }
+
+  if (imported === 0 && skipped === 0){
+    // Probably a bare "current" only — state already set
+    persistState(); persistScenarios(); hydrateInputs(); render();
+    toast('Loaded current scenario');
+    return;
+  }
+
+  persistState(); persistScenarios(); hydrateInputs(); render();
+  toast(`Imported ${imported}${skipped? ', skipped '+skipped : ''}`);
+}
+
+function triggerImport(){
+  const input = $('#importFile');
+  input.value = '';
+  input.click();
+}
+function handleImportFile(e){
+  const file = e.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => importConfigFromText(ev.target.result);
+  reader.onerror = () => toast('Could not read file');
+  reader.readAsText(file);
 }
 
 /* ---------- init ---------- */
