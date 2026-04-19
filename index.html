@@ -1,0 +1,1755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="CompoundX — advanced compound interest calculator with variable deposit phases, inflation, tax, SWP, goal-seek, and scenario comparison." />
+<title>CompoundX — Advanced Compound Calculator</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230891b2'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='system-ui' font-weight='800' font-size='18' fill='white'%3E%E2%88%91%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+<style>
+  :root{
+    --bg-deep:#f4f5fb;
+    --bg-mid:#ffffff;
+    --bg-card:rgba(255,255,255,0.72);
+    --bg-card-hover:rgba(255,255,255,0.88);
+    --border:rgba(15,23,42,0.08);
+    --border-strong:rgba(15,23,42,0.16);
+    --text:#0f172a;
+    --text-dim:#516079;
+    --text-faint:#8590a8;
+    --cyan:#0891b2;
+    --purple:#7c3aed;
+    --pink:#db2777;
+    --green:#059669;
+    --amber:#d97706;
+    --red:#dc2626;
+    --radius:18px;
+    --radius-sm:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+    color:var(--text);
+    background:var(--bg-deep);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;
+    background:
+      radial-gradient(60% 40% at 15% 10%, rgba(168,85,247,.18), transparent 60%),
+      radial-gradient(50% 35% at 90% 15%, rgba(14,165,233,.14), transparent 60%),
+      radial-gradient(55% 45% at 80% 95%, rgba(236,72,153,.12), transparent 60%),
+      radial-gradient(40% 30% at 20% 90%, rgba(16,185,129,.10), transparent 60%);
+    z-index:-2;animation:drift 22s ease-in-out infinite alternate;
+  }
+  body::after{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(244,245,251,0) 0%,rgba(244,245,251,.6) 100%);z-index:-1;pointer-events:none}
+  @keyframes drift{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(-2%,1%,0) scale(1.05)}}
+
+  .glass{
+    background:var(--bg-card);border:1px solid var(--border);
+    backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
+    border-radius:var(--radius);
+    box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 1px 2px rgba(15,23,42,.04),0 18px 40px -24px rgba(76,29,149,.18);
+  }
+
+  .shell{max-width:1440px;margin:0 auto;padding:20px 28px 80px}
+
+  /* Nav */
+  nav.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;margin-bottom:22px;position:sticky;top:14px;z-index:20}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700}
+  .logo{width:36px;height:36px;border-radius:11px;background:conic-gradient(from 180deg,var(--cyan),var(--purple),var(--pink),var(--cyan));position:relative;box-shadow:0 4px 14px rgba(124,58,237,.3)}
+  .logo::after{content:"";position:absolute;inset:3px;border-radius:9px;background:#fff}
+  .logo::before{content:"∑";position:absolute;inset:0;display:grid;place-items:center;z-index:1;font-weight:800;color:var(--purple);font-size:18px}
+  .brand b{font-size:16px}
+  .brand span{color:var(--text-dim);font-size:12px;margin-left:6px}
+  .topbar-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--border);color:var(--text-dim);background:var(--bg-card);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit}
+  .pill:hover{color:var(--text);border-color:var(--border-strong);background:var(--bg-card-hover)}
+  .pill.primary{background:linear-gradient(135deg,rgba(8,145,178,.12),rgba(124,58,237,.18));border-color:rgba(124,58,237,.3);color:var(--text);box-shadow:0 4px 14px rgba(124,58,237,.18)}
+  .pill.danger:hover{color:var(--red);border-color:var(--red)}
+
+  .seg{display:inline-flex;background:rgba(15,23,42,.04);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px}
+  .seg button{padding:7px 11px;border-radius:8px;background:transparent;border:none;color:var(--text-dim);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+  .seg button.on{background:#fff;color:var(--text);box-shadow:0 1px 3px rgba(15,23,42,.08)}
+
+  /* Hero */
+  .hero{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;padding:8px 4px 28px}
+  .hero h1{font-size:40px;line-height:1.05;font-weight:800;letter-spacing:-1px;background:linear-gradient(120deg,#0f172a 0%,#4c1d95 55%,var(--cyan) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .tag{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(5,150,105,.1);border:1px solid rgba(5,150,105,.25);color:var(--green);font-size:12px;font-weight:600;margin-bottom:14px}
+  .dot{width:6px;height:6px;border-radius:999px;background:var(--green);box-shadow:0 0 8px rgba(5,150,105,.5)}
+  .hero p{color:var(--text-dim);max-width:640px;margin-top:10px;font-size:15px;line-height:1.55}
+
+  /* Stat strip */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:6px 0 26px}
+  .stat{padding:18px 20px;position:relative;overflow:hidden}
+  .stat .label{color:var(--text-dim);font-size:12px;letter-spacing:.4px;text-transform:uppercase;font-weight:600}
+  .stat .value{font-size:28px;font-weight:800;margin-top:8px;font-variant-numeric:tabular-nums}
+  .stat .delta{font-size:12px;color:var(--text-dim);margin-top:4px;font-weight:600}
+  .stat.accent-cyan .value{color:var(--cyan)}
+  .stat.accent-purple .value{color:var(--purple)}
+  .stat.accent-green .value{color:var(--green)}
+  .stat.accent-pink .value{color:var(--pink)}
+  .stat::after{content:"";position:absolute;right:-40px;top:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,currentColor,transparent 70%);opacity:.18}
+  .stat.accent-cyan::after{color:var(--cyan)}
+  .stat.accent-purple::after{color:var(--purple)}
+  .stat.accent-green::after{color:var(--green)}
+  .stat.accent-pink::after{color:var(--pink)}
+
+  /* Main */
+  .main{display:grid;grid-template-columns:400px 1fr;gap:18px}
+  @media (max-width:1100px){.main{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+
+  /* Panel */
+  .panel{padding:18px 18px 16px}
+  .panel h3{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .panel h3 .chip{font-size:10px;padding:3px 8px;border-radius:999px;background:rgba(8,145,178,.12);color:var(--cyan);font-weight:700;letter-spacing:.5px}
+  .tabs{display:flex;gap:4px;padding:4px;border-radius:12px;background:rgba(15,23,42,.04);border:1px solid var(--border);margin-bottom:16px}
+  .tab{flex:1;padding:9px 10px;border-radius:9px;font-size:12px;font-weight:600;color:var(--text-dim);cursor:pointer;text-align:center;transition:all .2s;border:none;background:transparent;font-family:inherit}
+  .tab.active{background:#fff;color:var(--text);box-shadow:0 1px 3px rgba(15,23,42,.08),0 0 0 1px rgba(124,58,237,.18)}
+
+  .field{margin-bottom:14px}
+  .field label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-dim);margin-bottom:6px;font-weight:500}
+  .field label .hint{color:var(--text-faint);font-size:11px}
+  .input{width:100%;padding:11px 13px;border-radius:var(--radius-sm);background:#fff;border:1px solid var(--border);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;font-variant-numeric:tabular-nums;transition:all .2s}
+  .input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,58,237,.12)}
+  .input-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .input-row.three{grid-template-columns:1fr 1fr 1fr}
+  .input-prefix{position:relative}
+  .input-prefix .input{padding-left:30px}
+  .input-prefix::before{content:attr(data-prefix);position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-faint);font-weight:600;font-size:13px;pointer-events:none}
+  .input-suffix{position:relative}
+  .input-suffix .input{padding-right:34px}
+  .input-suffix::after{content:attr(data-suffix);position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-faint);font-weight:600;font-size:12px;pointer-events:none}
+
+  .range{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:999px;background:rgba(15,23,42,.1);outline:none}
+  .range::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 0 0 2px var(--purple),0 2px 6px rgba(124,58,237,.35)}
+  .range::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:none;box-shadow:0 0 0 2px var(--purple)}
+
+  /* Phases */
+  .phases{display:flex;flex-direction:column;gap:10px}
+  .phase{padding:12px 12px 12px 18px;border-radius:12px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(124,58,237,.05),rgba(8,145,178,.03));position:relative;cursor:pointer;transition:border-color .2s}
+  .phase:hover{border-color:var(--border-strong)}
+  .phase::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--cyan),var(--purple))}
+  .phase[data-color="purple"]::before{background:linear-gradient(180deg,var(--purple),var(--pink))}
+  .phase[data-color="zero"]::before{background:var(--text-faint)}
+  .phase-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .phase-title{font-size:13px;font-weight:700}
+  .phase-title small{color:var(--text-dim);font-weight:500;font-size:11px;margin-left:6px}
+  .phase-amt{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+  .phase-amt small{font-size:11px;color:var(--text-dim);font-weight:500}
+  .phase-meta{display:flex;gap:8px;font-size:11px;color:var(--text-dim);flex-wrap:wrap}
+  .phase-meta span b{color:var(--text);font-weight:600}
+  .phase-edit{display:none;padding-top:10px;margin-top:10px;border-top:1px dashed var(--border-strong)}
+  .phase.editing .phase-edit{display:block}
+  .phase-edit .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+  .phase-edit .row3{grid-template-columns:1fr 1fr 1fr}
+  .phase-edit label{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:3px}
+  .phase-edit .input{padding:8px 10px;font-size:13px}
+  .phase-edit .delete{font-size:11px;color:var(--red);background:none;border:none;cursor:pointer;padding:4px 8px;font-family:inherit;font-weight:600}
+  .phase-edit .delete:hover{text-decoration:underline}
+
+  .add-btn{padding:10px;border:1px dashed var(--border-strong);border-radius:12px;text-align:center;color:var(--text-dim);font-size:12px;font-weight:600;cursor:pointer;background:transparent;transition:all .2s;font-family:inherit;width:100%}
+  .add-btn:hover{color:var(--purple);border-color:var(--purple);background:rgba(124,58,237,.05)}
+
+  /* Lump sums */
+  .lumps{display:flex;flex-direction:column;gap:8px}
+  .lump{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;align-items:center;padding:10px;background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2);border-radius:10px}
+  .lump input{padding:6px 8px;font-size:12px;border-radius:6px;background:#fff;border:1px solid var(--border);color:var(--text);font-family:inherit;font-weight:600;width:100%}
+  .lump .x{color:var(--text-faint);cursor:pointer;padding:4px 8px;font-weight:700}
+  .lump .x:hover{color:var(--red)}
+
+  /* Toggle rows */
+  .toggle-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--border);gap:10px}
+  .toggle-row:first-child{border-top:none}
+  .toggle-row .l{font-size:13px;font-weight:500}
+  .toggle-row .d{font-size:11px;color:var(--text-dim);margin-top:2px}
+  .toggle{position:relative;width:38px;height:22px;border-radius:999px;background:rgba(15,23,42,.1);border:1px solid var(--border);cursor:pointer;transition:all .2s;flex-shrink:0}
+  .toggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.2);transition:all .2s}
+  .toggle.on{background:linear-gradient(90deg,var(--cyan),var(--purple));border-color:transparent;box-shadow:0 2px 8px rgba(124,58,237,.35)}
+  .toggle.on::after{left:18px}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
+  .btn-primary{width:100%;color:#fff;background:linear-gradient(135deg,var(--cyan) 0%,var(--purple) 100%);box-shadow:0 6px 18px rgba(124,58,237,.35),0 2px 6px rgba(8,145,178,.2);margin-top:6px}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(124,58,237,.45)}
+
+  /* Dashboard */
+  .dashboard{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .dashboard .wide{grid-column:1 / -1}
+  .card{padding:18px}
+  .card h4{font-size:13px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .card h4 .sub{font-size:11px;color:var(--text-dim);font-weight:500}
+  .legend{display:flex;gap:14px;margin:8px 0 12px;flex-wrap:wrap}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);font-weight:500}
+  .legend-item .sw{width:10px;height:10px;border-radius:3px}
+  .chart-wrap{position:relative;height:240px}
+  .chart-wrap.tall{height:300px}
+  .hover-readout{margin-top:10px;padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(8,145,178,.06),rgba(124,58,237,.06));border:1px solid rgba(124,58,237,.18);font-size:12px;color:var(--text);display:flex;gap:18px;flex-wrap:wrap;align-items:center;min-height:42px;transition:all .15s ease}
+  .hover-readout .hr-hint{color:var(--text-dim);font-style:italic;font-weight:500}
+  .hover-readout .hr-year{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:var(--purple);font-size:13px;padding:3px 8px;border-radius:6px;background:rgba(124,58,237,.1)}
+  .hover-readout .hr-item{display:flex;flex-direction:column;gap:1px}
+  .hover-readout .hr-item .hr-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+  .hover-readout .hr-item .hr-val{font-weight:700;font-size:13px;color:var(--text)}
+  .hover-readout .hr-item .hr-val.cyan{color:var(--cyan)}
+  .hover-readout .hr-item .hr-val.purple{color:var(--purple)}
+  .hover-readout .hr-item .hr-val.green{color:var(--green)}
+  .hover-readout .hr-phase{margin-left:auto;font-size:11px;color:var(--text-dim);font-weight:500}
+  .goal-banner{padding:10px 14px;border-radius:10px;background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(8,145,178,.08));border:1px solid rgba(124,58,237,.2);font-size:12px;font-weight:600;margin-bottom:12px;display:none}
+  .goal-banner.on{display:block}
+  .goal-banner b{color:var(--purple)}
+
+  /* Timeline */
+  .timeline{padding:18px 20px}
+  .timeline-head{display:flex;justify-content:space-between;margin-bottom:14px;align-items:center}
+  .timeline-track{height:56px;border-radius:14px;display:grid;gap:3px;position:relative;overflow:hidden;background:rgba(15,23,42,.04);border:1px solid var(--border)}
+  .timeline-phase{position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:11px;font-weight:700;text-align:center;padding:0 6px}
+  .timeline-phase.tp1{background:linear-gradient(135deg,rgba(8,145,178,.28),rgba(8,145,178,.1));color:var(--cyan)}
+  .timeline-phase.tp2{background:linear-gradient(135deg,rgba(124,58,237,.28),rgba(124,58,237,.1));color:var(--purple)}
+  .timeline-phase.tp3{background:linear-gradient(135deg,rgba(219,39,119,.25),rgba(219,39,119,.08));color:var(--pink)}
+  .timeline-phase.tp0{background:linear-gradient(135deg,rgba(148,163,184,.25),rgba(148,163,184,.08));color:var(--text-dim)}
+  .timeline-phase small{font-size:10px;font-weight:500;opacity:.75;margin-top:2px}
+  .timeline-axis{display:grid;margin-top:8px;font-size:10px;color:var(--text-faint);font-weight:500}
+  .timeline-axis span{text-align:center}
+  .timeline-axis span:first-child{text-align:left}
+  .timeline-axis span:last-child{text-align:right}
+  .timeline-markers{position:absolute;inset:0;pointer-events:none}
+  .marker{position:absolute;top:50%;transform:translateY(-50%)}
+  .marker .pin{width:22px;height:22px;border-radius:50%;background:var(--amber);border:2px solid #fff;box-shadow:0 2px 8px rgba(217,119,6,.5);display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff}
+  .marker .lbl{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;color:var(--amber);font-weight:700}
+
+  /* Scenarios */
+  .scenarios{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .scen-pill{padding:8px 14px;border-radius:999px;background:var(--bg-card);border:1px solid var(--border);font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .2s;position:relative}
+  .scen-pill:hover{background:var(--bg-card-hover)}
+  .scen-pill.active{border-color:var(--purple);box-shadow:0 2px 10px rgba(124,58,237,.2);background:#fff;color:var(--text)}
+  .scen-pill.current{outline:2px dashed rgba(8,145,178,.55);outline-offset:2px}
+  .scen-pill .sw{width:8px;height:8px;border-radius:50%}
+  .scen-pill .dots{opacity:.55;padding:0 4px;font-weight:700;letter-spacing:1px;border-left:1px solid var(--border)}
+  .scen-pill .dots:hover{opacity:1;color:var(--purple)}
+  .scen-pill .x{opacity:.5;padding-left:6px;border-left:1px solid var(--border)}
+  .scen-pill .x:hover{opacity:1;color:var(--red)}
+
+  .scen-toolbar{display:flex;gap:6px;flex-wrap:wrap}
+  .mini-btn{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-dim);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+  .mini-btn:hover{background:var(--bg-card-hover);color:var(--text);border-color:rgba(124,58,237,.35)}
+  .mini-btn.danger:hover{color:var(--red);border-color:rgba(220,38,38,.4)}
+
+  .scen-menu{position:absolute;z-index:50;min-width:190px;padding:6px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 30px rgba(15,23,42,.14);display:flex;flex-direction:column;gap:2px}
+  .scen-menu button{all:unset;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:12px;color:var(--text);cursor:pointer;font-family:inherit}
+  .scen-menu button:hover{background:rgba(124,58,237,.08)}
+  .scen-menu button.danger{color:var(--red,#dc2626)}
+  .scen-menu button.danger:hover{background:rgba(220,38,38,.08)}
+  .scen-menu hr{border:0;border-top:1px solid var(--border);margin:4px 2px}
+  .scen-menu-backdrop{position:fixed;inset:0;z-index:49}
+
+  /* Breakdown */
+  .breakdown{margin-top:6px;font-size:12px;overflow:auto;max-height:420px}
+  .breakdown table{width:100%;border-collapse:collapse}
+  .breakdown th,.breakdown td{text-align:right;padding:8px 10px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .breakdown th:first-child,.breakdown td:first-child{text-align:left}
+  .breakdown th{color:var(--text-dim);font-weight:600;font-size:11px;letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-card);backdrop-filter:blur(10px)}
+  .breakdown tbody tr{border-bottom:1px solid rgba(15,23,42,.05)}
+  .breakdown tbody tr:hover{background:rgba(124,58,237,.04)}
+  .breakdown .up{color:var(--green)}
+  .breakdown .neu{color:var(--amber)}
+  .breakdown .dn{color:var(--red)}
+
+  /* Section heading */
+  .section-head{display:flex;align-items:center;gap:10px;margin:28px 2px 14px;flex-wrap:wrap}
+  .section-head h2{font-size:18px;font-weight:700;letter-spacing:-.2px}
+  .section-head .line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);min-width:40px}
+
+  footer{margin-top:40px;padding:20px;text-align:center;color:var(--text-faint);font-size:12px}
+  footer b{color:var(--text-dim)}
+  footer a{color:var(--purple);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+
+  /* Toast */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);padding:12px 20px;border-radius:12px;background:var(--text);color:#fff;font-size:13px;font-weight:600;box-shadow:0 12px 28px rgba(15,23,42,.25);opacity:0;pointer-events:none;transition:all .25s;z-index:100}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* SWP result block */
+  .swp-result{padding:14px;border-radius:12px;background:linear-gradient(135deg,rgba(219,39,119,.08),rgba(124,58,237,.05));border:1px solid rgba(219,39,119,.2);margin-top:12px;display:none}
+  .swp-result.on{display:block}
+  .swp-result .row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+  .swp-result .row .v{font-weight:700;font-variant-numeric:tabular-nums}
+  .swp-result .warn{color:var(--red)}
+  .swp-result .ok{color:var(--green)}
+
+  /* Hidden util */
+  [hidden]{display:none !important}
+
+  @media print {
+    body::before,body::after{display:none}
+    nav,.pill,.btn,.add-btn,.tabs,.toggle,.seg,.scenarios{display:none !important}
+    .glass{box-shadow:none;border:1px solid #ddd}
+    body{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- TOP NAV -->
+  <nav class="topbar glass">
+    <div class="brand">
+      <div class="logo"></div>
+      <div><b>CompoundX</b><span>· 2026 Edition</span></div>
+    </div>
+    <div class="topbar-actions">
+      <div class="seg" id="modeSeg">
+        <button class="on" data-mode="accum">Accumulation</button>
+        <button data-mode="swp">Drawdown / SWP</button>
+        <button data-mode="goal">Goal‑seek</button>
+      </div>
+      <button class="pill" id="saveBtn" title="Save current as a named scenario">＋ Save scenario</button>
+      <button class="pill" id="shareBtn" title="Copy a shareable link">⎘ Share</button>
+      <button class="pill" id="csvBtn" title="Download yearly breakdown as CSV">⇣ CSV</button>
+      <button class="pill" id="printBtn" title="Print or save as PDF">⇣ PDF</button>
+      <button class="pill primary" id="resetBtn">↺ Reset</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="tag"><span class="dot"></span> Live · updates as you type</div>
+      <h1>The compound calculator<br>built for how you <i>actually</i> save.</h1>
+      <p>Model variable monthly deposits across life phases, apply inflation &amp; tax, simulate withdrawals, and compare scenarios side‑by‑side — with a chart for every decision.</p>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats" id="stats">
+    <div class="stat glass accent-cyan"><div class="label">Total invested</div><div class="value" id="statContrib">—</div><div class="delta" id="statContribSub">&nbsp;</div></div>
+    <div class="stat glass accent-purple"><div class="label">Interest earned</div><div class="value" id="statInterest">—</div><div class="delta" id="statInterestSub">&nbsp;</div></div>
+    <div class="stat glass accent-green"><div class="label">Final balance</div><div class="value" id="statFinal">—</div><div class="delta" id="statFinalSub">&nbsp;</div></div>
+    <div class="stat glass accent-pink"><div class="label">Real value</div><div class="value" id="statReal">—</div><div class="delta" id="statRealSub">&nbsp;</div></div>
+  </section>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- LEFT: INPUT PANEL -->
+    <aside class="panel glass">
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-tab="setup">Setup</button>
+        <button class="tab" data-tab="phases">Phases</button>
+        <button class="tab" data-tab="advanced">Advanced</button>
+        <button class="tab" data-tab="withdraw">Withdraw</button>
+      </div>
+
+      <!-- SETUP TAB -->
+      <div data-tabpanel="setup">
+        <h3>Base parameters <span class="chip">STEP 1</span></h3>
+
+        <div class="field">
+          <label>Currency <span class="hint" id="currencyHint">western numbers</span></label>
+          <select class="input" id="currency">
+            <option value="USD">USD — US Dollar ($)</option>
+            <option value="EUR">EUR — Euro (€)</option>
+            <option value="SAR">SAR — Saudi Riyal (﷼)</option>
+            <option value="AED">AED — UAE Dirham (د.إ)</option>
+            <option value="PKR">PKR — Pakistani Rupee (Rs) · Lakh/Crore</option>
+            <option value="INR">INR — Indian Rupee (₹) · Lakh/Crore</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Starting balance <span class="hint">one‑time seed</span></label>
+          <div class="input-prefix cur-prefix" data-prefix="$"><input class="input" id="startingBalance" type="number" step="100"></div>
+        </div>
+        <div class="input-row">
+          <div class="field"><label>Duration</label><div class="input-suffix" data-suffix="yrs"><input class="input" id="durationYears" type="number" min="1" max="80"></div></div>
+          <div class="field"><label>Compound</label>
+            <select class="input" id="compoundFreq">
+              <option value="monthly">Monthly</option><option value="daily">Daily</option>
+              <option value="quarterly">Quarterly</option><option value="annual">Annual</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Default return rate <span class="hint"><span id="defaultRateLabel">8.0</span>% p.a.</span></label>
+          <input type="range" class="range" id="defaultReturnPct" min="0" max="15" step="0.1">
+        </div>
+
+        <h3 style="margin-top:22px">Lump‑sums &amp; bonuses</h3>
+        <div class="lumps" id="lumpsList"></div>
+        <button class="add-btn" id="addLump" style="margin-top:8px">＋ Add lump sum / bonus</button>
+
+        <button class="btn btn-primary" id="saveCurrentBtn" style="margin-top:18px">＋ Save as new scenario</button>
+        <p style="font-size:11px;color:var(--text-faint);text-align:center;margin-top:12px">Auto‑saved · all data stays in your browser</p>
+      </div>
+
+      <!-- PHASES TAB -->
+      <div data-tabpanel="phases" hidden>
+        <h3>Deposit phases <span class="chip" style="background:rgba(124,58,237,.1);color:var(--purple)">STEP 2</span></h3>
+        <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;line-height:1.5">Define different monthly deposit amounts for different spans of time. Click a phase to edit.</p>
+        <div class="phases" id="phasesList"></div>
+        <button class="add-btn" id="addPhase" style="margin-top:10px">＋ Add phase</button>
+      </div>
+
+      <!-- ADVANCED TAB -->
+      <div data-tabpanel="advanced" hidden>
+        <h3>Inflation &amp; tax</h3>
+        <div class="toggle-row">
+          <div><div class="l">Inflation adjustment</div><div class="d">show real (today's money) values</div></div>
+          <div class="toggle" id="tglInflation"></div>
+        </div>
+        <div class="field" id="inflationField" style="margin-top:8px">
+          <label>Inflation rate <span class="hint"><span id="inflationLabel">3.0</span>% p.a.</span></label>
+          <input type="range" class="range" id="inflationPct" min="0" max="10" step="0.1">
+        </div>
+
+        <div class="toggle-row">
+          <div><div class="l">Tax on gains</div><div class="d">apply a tax rate to interest earned</div></div>
+          <div class="toggle" id="tglTax"></div>
+        </div>
+        <div id="taxFields" style="margin-top:6px">
+          <div class="field">
+            <label>Tax mode</label>
+            <select class="input" id="taxMode">
+              <option value="none">None</option>
+              <option value="endCGT">End‑of‑term (capital gains)</option>
+              <option value="annualDrag">Annual drag (taxed each year)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tax rate <span class="hint"><span id="taxRateLabel">15.0</span>%</span></label>
+            <input type="range" class="range" id="taxRatePct" min="0" max="50" step="0.5">
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px">Goal‑seek</h3>
+        <div class="toggle-row">
+          <div><div class="l">Solve for monthly deposit</div><div class="d">find phase‑1 deposit that hits a target</div></div>
+          <div class="toggle" id="tglGoal"></div>
+        </div>
+        <div id="goalFields" style="margin-top:6px">
+          <div class="field">
+            <label>Target final balance</label>
+            <div class="input-prefix cur-prefix" data-prefix="$"><input class="input" id="goalTarget" type="number" step="10000"></div>
+          </div>
+          <p style="font-size:11px;color:var(--text-faint);margin-top:-4px;line-height:1.5">The calculator will bisect to find the monthly deposit for phase 1 that hits this target (holds everything else constant).</p>
+        </div>
+      </div>
+
+      <!-- WITHDRAW TAB -->
+      <div data-tabpanel="withdraw" hidden>
+        <h3>Systematic withdrawal (SWP)</h3>
+        <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;line-height:1.5">After accumulation ends, simulate monthly withdrawals. See how long your pot lasts.</p>
+        <div class="toggle-row">
+          <div><div class="l">Enable withdrawal phase</div><div class="d">turns on the drawdown simulation</div></div>
+          <div class="toggle" id="tglSWP"></div>
+        </div>
+        <div id="swpFields" style="margin-top:6px">
+          <div class="input-row">
+            <div class="field"><label>Monthly amount</label><div class="input-prefix cur-prefix" data-prefix="$"><input class="input" id="swpAmount" type="number" step="100"></div></div>
+            <div class="field"><label>Duration</label><div class="input-suffix" data-suffix="yrs"><input class="input" id="swpDuration" type="number" min="1" max="60"></div></div>
+          </div>
+          <div class="input-row">
+            <div class="field"><label>Yearly escalation</label><div class="input-suffix" data-suffix="%"><input class="input" id="swpEscalate" type="number" step="0.1" min="0" max="15"></div></div>
+            <div class="field"><label>Post‑retire return</label><div class="input-suffix" data-suffix="%"><input class="input" id="swpReturn" type="number" step="0.1" min="0" max="15"></div></div>
+          </div>
+          <div class="swp-result" id="swpResult">
+            <div class="row"><span>Total withdrawn</span><span class="v" id="swpTotal">—</span></div>
+            <div class="row"><span>End balance</span><span class="v" id="swpEnd">—</span></div>
+            <div class="row" id="swpDepRow"><span>Pot lasts</span><span class="v" id="swpDep">—</span></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: DASHBOARD -->
+    <section class="dashboard">
+
+      <div class="card glass wide">
+        <h4>Growth over time <span class="sub" id="growthSub">principal vs interest</span></h4>
+        <div class="goal-banner" id="goalBanner"></div>
+        <div class="legend">
+          <div class="legend-item"><div class="sw" style="background:linear-gradient(90deg,var(--cyan),#4d7dff)"></div>Contributions</div>
+          <div class="legend-item"><div class="sw" style="background:linear-gradient(90deg,var(--purple),var(--pink))"></div>Interest</div>
+          <div class="legend-item"><div class="sw" style="background:rgba(217,119,6,.7)"></div>Lump sums</div>
+          <div class="legend-item"><div class="sw" style="background:repeating-linear-gradient(45deg,rgba(15,23,42,.35) 0 3px,transparent 3px 6px)"></div>Real value</div>
+        </div>
+        <div class="chart-wrap tall"><canvas id="growth"></canvas></div>
+        <div class="hover-readout" id="hoverReadout" aria-live="polite">
+          <span class="hr-hint">Hover the chart to inspect any year along your journey</span>
+        </div>
+      </div>
+
+      <div class="card glass"><h4>Final composition <span class="sub" id="donutSub">year N</span></h4><div class="chart-wrap"><canvas id="donut"></canvas></div></div>
+
+      <div class="card glass"><h4>Yearly deposits vs interest <span class="sub">crossover year highlighted</span></h4><div class="chart-wrap"><canvas id="bars"></canvas></div></div>
+
+      <div class="card glass wide">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <h4 style="margin:0">Scenario comparison <span class="sub">click a pill to toggle · ⋯ for more</span></h4>
+          <div class="scen-toolbar">
+            <button class="mini-btn" id="importScenBtn" title="Import scenarios from a JSON file">📥 Import</button>
+            <button class="mini-btn" id="exportCurrentBtn" title="Export current scenario to JSON">📤 Export current</button>
+            <button class="mini-btn" id="exportAllBtn" title="Export all saved scenarios + current">📚 Export all</button>
+            <input type="file" id="importFile" accept="application/json,.json" hidden>
+          </div>
+        </div>
+        <div class="scenarios" id="scenPills"></div>
+        <div class="chart-wrap tall" style="margin-top:10px"><canvas id="compare"></canvas></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PHASE TIMELINE STRIP -->
+  <div class="section-head"><h2>Deposit phase timeline</h2><div class="line"></div><span style="font-size:12px;color:var(--text-dim)" id="timelineSub">—</span></div>
+  <div class="timeline glass" id="timeline">
+    <div class="timeline-head">
+      <div><div style="font-size:12px;color:var(--text-dim)">Year 0 · today</div><div style="font-size:13px;font-weight:600;margin-top:2px" id="timelineHorizon">—</div></div>
+      <div style="font-size:12px;color:var(--text-dim)">total contributions: <b style="color:var(--text)" id="timelineTotal">—</b></div>
+    </div>
+    <div style="position:relative">
+      <div class="timeline-track" id="timelineTrack"></div>
+      <div class="timeline-markers" id="timelineMarkers"></div>
+    </div>
+    <div class="timeline-axis" id="timelineAxis"></div>
+  </div>
+
+  <!-- BREAKDOWN -->
+  <div class="section-head"><h2>Yearly breakdown</h2><div class="line"></div></div>
+  <div class="card glass breakdown" id="breakdown">
+    <table>
+      <thead><tr><th>Year</th><th>Phase</th><th>Deposited</th><th>Interest</th><th>Balance</th><th>Real value</th><th>After‑tax</th></tr></thead>
+      <tbody id="yearTable"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    <b>CompoundX</b> · runs entirely in your browser · no accounts, no tracking · <a href="#" id="loadDefaults">reset to example plan</a>
+  </footer>
+</div>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+/* ============================================================
+   CompoundX — advanced compound interest calculator
+   Single-file app. All state in localStorage + optional URL hash.
+   ============================================================ */
+
+/* ---------- constants ---------- */
+const palette = {
+  cyan:'#0891b2', purple:'#7c3aed', pink:'#db2777', green:'#059669',
+  amber:'#d97706', textDim:'#516079', border:'rgba(15,23,42,.08)',
+  grid:'rgba(15,23,42,.06)', tooltipBg:'rgba(255,255,255,.98)', tooltipText:'#0f172a'
+};
+Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, sans-serif";
+Chart.defaults.color = palette.textDim;
+Chart.defaults.borderColor = palette.border;
+
+/* Crosshair plugin — draws a dashed vertical line at the hovered year */
+const crosshairPlugin = {
+  id: 'crosshair',
+  afterDatasetsDraw(chart){
+    const active = chart.tooltip?._active;
+    if (!active || !active.length) return;
+    const x = active[0].element.x;
+    const { top, bottom } = chart.chartArea;
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x, top); ctx.lineTo(x, bottom);
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.strokeStyle = 'rgba(124,58,237,0.55)';
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+
+const COMPARE_COLORS = ['#0891b2','#7c3aed','#db2777','#059669','#d97706','#2563eb'];
+
+/* Currency configuration. "indian" numbering uses Lakh (L, 1e5) and Crore (Cr, 1e7)
+   plus Indian-style comma grouping (e.g. 1,23,45,678). */
+const CURRENCIES = {
+  USD: { symbol:'$',    code:'USD', label:'US Dollar',        numbering:'western' },
+  EUR: { symbol:'€',    code:'EUR', label:'Euro',             numbering:'western' },
+  SAR: { symbol:'﷼ ',   code:'SAR', label:'Saudi Riyal',      numbering:'western' },
+  AED: { symbol:'د.إ ', code:'AED', label:'UAE Dirham',       numbering:'western' },
+  PKR: { symbol:'Rs ',  code:'PKR', label:'Pakistani Rupee',  numbering:'indian'  },
+  INR: { symbol:'₹',    code:'INR', label:'Indian Rupee',     numbering:'indian'  },
+};
+
+const LS_KEY = 'compoundx:v1:scenarios';
+const LS_CURRENT = 'compoundx:v1:current';
+const LS_COMPARE = 'compoundx:v1:compareIds';
+
+const defaultScenario = () => ({
+  id: uid(), name:'My phased plan', color: palette.cyan,
+  currency: 'USD',
+  startingBalance: 10000,
+  durationYears: 25, compoundFreq:'monthly', defaultReturnPct:8,
+  phases:[
+    { id:uid(), startYear:0,  endYear:5,  monthlyDeposit:2000, depositGrowthPct:0, annualReturnPct:8 },
+    { id:uid(), startYear:5,  endYear:15, monthlyDeposit:1000, depositGrowthPct:2, annualReturnPct:7.5 },
+    { id:uid(), startYear:15, endYear:25, monthlyDeposit:0,    depositGrowthPct:0, annualReturnPct:6 },
+  ],
+  lumpSums:[
+    { id:uid(), atYear:3, atMonth:1, amount:10000, label:'Year 3 bonus' }
+  ],
+  inflationPct:3, inflationOn:true,
+  taxMode:'endCGT', taxRatePct:15, taxOn:true,
+  goalSeek:{ enabled:false, targetFinalBalance:1000000 },
+  withdrawal:{ enabled:false, monthlyAmount:3000, escalatePct:3, durationYears:20, postRetireReturnPct:5 }
+});
+
+/* ---------- helpers ---------- */
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+
+function currentCurrency(){ return CURRENCIES[(state && state.currency) || 'USD'] || CURRENCIES.USD; }
+
+/* Indian-style comma grouping: 12345678 -> "1,23,45,678" */
+function indianCommas(nAbs){
+  const str = Math.round(nAbs).toString();
+  if (str.length <= 3) return str;
+  const last3 = str.slice(-3);
+  const rest  = str.slice(0, -3);
+  const grouped = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
+  return grouped + ',' + last3;
+}
+
+/* Short form: $1.2M (western) or ₹1.23 Cr (indian) */
+function fmtCur(n, digits=0){
+  if (!isFinite(n)) return '—';
+  const cur = currentCurrency();
+  const sign = n < 0 ? '-' : '';
+  const abs = Math.abs(n);
+  if (cur.numbering === 'indian'){
+    if (abs >= 1e7) return sign + cur.symbol + (abs/1e7).toFixed(2).replace(/\.?0+$/,'') + ' Cr';
+    if (abs >= 1e5) return sign + cur.symbol + (abs/1e5).toFixed(2).replace(/\.?0+$/,'') + ' L';
+    return sign + cur.symbol + indianCommas(abs);
+  } else {
+    if (abs >= 1e9) return sign + cur.symbol + (abs/1e9).toFixed(1) + 'B';
+    if (abs >= 1e6) return sign + cur.symbol + (abs/1e6).toFixed(2) + 'M';
+    return sign + cur.symbol + abs.toLocaleString(undefined,{maximumFractionDigits:digits});
+  }
+}
+
+/* Full form: ₹9,02,31,045 (indian) or $902,310 (western) */
+function fmtFull(n){
+  if (!isFinite(n)) return '—';
+  const cur = currentCurrency();
+  const sign = n < 0 ? '-' : '';
+  const abs = Math.round(Math.abs(n));
+  if (cur.numbering === 'indian') return sign + cur.symbol + indianCommas(abs);
+  return sign + cur.symbol + abs.toLocaleString();
+}
+
+function fmtPct(n){ return (n).toFixed(1)+'%'; }
+function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+
+/* ---------- engine ---------- */
+function findPhase(phases, year){ return phases.find(p => year >= p.startYear && year < p.endYear) || null; }
+
+function simulate(sc){
+  const totalMonths = Math.round(sc.durationYears*12);
+  const bal0 = sc.startingBalance;
+  let balance = bal0;
+  let totalContrib = bal0;
+  let prevYearBal = balance;
+  let taxPaid = 0;
+  const series = [{ m:0, balance, contrib:totalContrib, interest:0 }];
+  const yearly = []; // per-year aggregates
+  let yearStartContrib = totalContrib;
+  let yearStartBal = balance;
+
+  for (let m=1; m<=totalMonths; m++){
+    const year = Math.floor((m-1)/12);
+    const phase = findPhase(sc.phases, year);
+    const yearsIn = phase ? (year - phase.startYear) : 0;
+    const annualPct = phase ? phase.annualReturnPct : sc.defaultReturnPct;
+    const r = annualPct/100;
+
+    // Compounding based on frequency
+    if (sc.compoundFreq==='monthly'){
+      balance *= (1 + r/12);
+    } else if (sc.compoundFreq==='daily'){
+      // apply ~30.4 daily periods per month
+      balance *= Math.pow(1 + r/365, 365/12);
+    } else if (sc.compoundFreq==='quarterly'){
+      if (m % 3 === 0) balance *= (1 + r/4);
+    } else if (sc.compoundFreq==='annual'){
+      if (m % 12 === 0) balance *= (1 + r);
+    }
+
+    // Monthly deposit (escalated from phase start)
+    if (phase){
+      const escal = Math.pow(1 + phase.depositGrowthPct/100, yearsIn);
+      const dep = phase.monthlyDeposit * escal;
+      balance += dep;
+      totalContrib += dep;
+    }
+
+    // Lump sums
+    for (const ls of sc.lumpSums){
+      if ((ls.atYear*12 + Math.max(1,Math.min(12,ls.atMonth||1))) === m){
+        balance += ls.amount;
+        totalContrib += ls.amount;
+      }
+    }
+
+    // Annual tax drag
+    if (sc.taxOn && sc.taxMode==='annualDrag' && m % 12 === 0){
+      const yearGain = balance - yearStartBal - (totalContrib - yearStartContrib);
+      if (yearGain > 0){
+        const t = yearGain * (sc.taxRatePct/100);
+        balance -= t; taxPaid += t;
+      }
+      yearStartBal = balance; yearStartContrib = totalContrib;
+    }
+
+    series.push({ m, balance, contrib: totalContrib, interest: balance - totalContrib });
+
+    if (m % 12 === 0){
+      const y = m/12;
+      const prev = yearly[yearly.length-1];
+      const yrContrib = totalContrib - (prev ? prev.cumContrib : bal0);
+      yearly.push({
+        year: y,
+        phase: findPhase(sc.phases, y-1),
+        deposited: yrContrib,
+        interest: balance - totalContrib - (prev ? prev.cumInterest : 0),
+        balance,
+        cumContrib: totalContrib,
+        cumInterest: balance - totalContrib,
+      });
+    }
+  }
+
+  let finalBalance = balance;
+  let afterTax = finalBalance;
+  if (sc.taxOn && sc.taxMode==='endCGT'){
+    const gain = finalBalance - totalContrib;
+    if (gain>0){ taxPaid = gain*(sc.taxRatePct/100); afterTax = finalBalance - taxPaid; }
+  } else if (sc.taxOn && sc.taxMode==='annualDrag'){
+    afterTax = finalBalance;
+  }
+
+  const realFinal = sc.inflationOn ? finalBalance / Math.pow(1+sc.inflationPct/100, sc.durationYears) : finalBalance;
+
+  return { series, yearly, totalContrib, finalBalance, afterTax, taxPaid, realFinal, totalInterest: finalBalance-totalContrib };
+}
+
+function simulateSWP(startBalance, w, inflation){
+  const months = Math.round(w.durationYears*12);
+  const r = w.postRetireReturnPct/100;
+  let bal = startBalance;
+  let totalWithdrawn = 0;
+  let depletedAtMonth = null;
+  const series = [{m:0, balance:bal, withdrawn:0}];
+  for (let m=1; m<=months; m++){
+    const year = Math.floor((m-1)/12);
+    const escal = Math.pow(1 + w.escalatePct/100, year);
+    const amt = w.monthlyAmount * escal;
+    bal *= (1 + r/12);
+    bal -= amt;
+    totalWithdrawn += amt;
+    if (bal < 0 && depletedAtMonth===null){ depletedAtMonth = m; bal = 0; }
+    series.push({m, balance:bal, withdrawn:totalWithdrawn});
+  }
+  return { series, totalWithdrawn, depletedAtMonth, finalBalance:bal };
+}
+
+function goalSeek(sc, target){
+  if (!sc.phases.length) return 0;
+  const s = clone(sc); s.goalSeek.enabled = false;
+  let lo=0, hi=200000;
+  for (let i=0;i<60;i++){
+    const mid = (lo+hi)/2;
+    s.phases[0].monthlyDeposit = mid;
+    const r = simulate(s).finalBalance;
+    if (r < target) lo = mid; else hi = mid;
+    if (Math.abs(r - target) < 1) break;
+  }
+  return (lo+hi)/2;
+}
+
+/* ---------- state ---------- */
+let state = loadState();
+let scenarios = loadScenarios();
+let compareIds = loadCompareIds();
+let mode = 'accum';
+
+function loadState(){
+  // Priority: URL hash > draft localStorage > default
+  const hash = location.hash.slice(1);
+  if (hash){
+    try {
+      const json = LZString.decompressFromEncodedURIComponent(hash);
+      if (json) return JSON.parse(json);
+    } catch(e){ console.warn('bad hash', e); }
+  }
+  try {
+    const raw = localStorage.getItem(LS_CURRENT);
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
+  return defaultScenario();
+}
+function persistState(){ localStorage.setItem(LS_CURRENT, JSON.stringify(state)); }
+
+function loadScenarios(){
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw){ const arr = JSON.parse(raw); if (Array.isArray(arr) && arr.length) return arr; }
+  } catch(e){}
+  // Seed with a couple of comparison scenarios on first load
+  const s1 = { ...defaultScenario(), id:uid(), name:'Flat $1,250/mo', color:palette.purple,
+    phases:[{ id:uid(), startYear:0, endYear:25, monthlyDeposit:1250, depositGrowthPct:0, annualReturnPct:8 }], lumpSums:[] };
+  const s2 = { ...defaultScenario(), id:uid(), name:'Front‑loaded $3k × 5y', color:palette.pink,
+    phases:[
+      { id:uid(), startYear:0, endYear:5,  monthlyDeposit:3000, depositGrowthPct:0, annualReturnPct:8 },
+      { id:uid(), startYear:5, endYear:25, monthlyDeposit:0,    depositGrowthPct:0, annualReturnPct:7 }
+    ], lumpSums:[] };
+  const seeded = [s1, s2];
+  try { localStorage.setItem(LS_KEY, JSON.stringify(seeded)); } catch(e){}
+  return seeded;
+}
+function persistScenarios(){ localStorage.setItem(LS_KEY, JSON.stringify(scenarios)); }
+
+function loadCompareIds(){
+  try { const raw = localStorage.getItem(LS_COMPARE); if (raw) return JSON.parse(raw); } catch(e){}
+  return scenarios.map(s => s.id); // all on by default
+}
+function persistCompareIds(){ localStorage.setItem(LS_COMPARE, JSON.stringify(compareIds)); }
+
+/* ---------- render ---------- */
+let charts = {};
+// Live refs for tooltip callbacks (updated every renderCharts())
+let currentSc = null;
+let currentR = null;
+
+function render(opts={}){
+  // Apply goal-seek if enabled
+  const displayState = clone(state);
+  let goalSolvedMonthly = null;
+  if (state.goalSeek.enabled && state.phases.length){
+    goalSolvedMonthly = goalSeek(state, state.goalSeek.targetFinalBalance);
+    displayState.phases[0].monthlyDeposit = goalSolvedMonthly;
+  }
+
+  const result = simulate(displayState);
+
+  renderStats(displayState, result);
+  renderCharts(displayState, result);
+  // Skip rebuilding editor cards while the user is typing inside them
+  if (!opts.skipEditors){
+    renderPhases(state);
+    renderLumpSums();
+  }
+  renderTimeline(displayState, result);
+  renderBreakdown(displayState, result);
+  renderScenarioPills();
+  renderGoalBanner(goalSolvedMonthly, result);
+  renderSWP(displayState, result);
+
+  persistState();
+}
+const debouncedQuickRender = debounce(()=>render({skipEditors:true}), 120);
+
+function renderStats(sc, r){
+  $('#statContrib').textContent = fmtFull(r.totalContrib);
+  $('#statContribSub').textContent = `${sc.phases.filter(p=>p.monthlyDeposit>0).length} active phase(s)`;
+  $('#statInterest').textContent = fmtFull(r.totalInterest);
+  const pct = r.totalContrib>0 ? (r.totalInterest/r.totalContrib*100) : 0;
+  $('#statInterestSub').textContent = `+${pct.toFixed(0)}% on principal`;
+  $('#statFinal').textContent = fmtFull(r.finalBalance);
+  $('#statFinalSub').textContent = sc.taxOn ? `after tax: ${fmtFull(r.afterTax)}` : `year ${sc.durationYears}`;
+  $('#statReal').textContent = fmtFull(r.realFinal);
+  $('#statRealSub').textContent = sc.inflationOn ? `after ${sc.durationYears}y of ${sc.inflationPct}% inflation` : 'inflation off';
+}
+
+function yearlyBalances(sc, r){
+  const arr = [sc.startingBalance];
+  for (const y of r.yearly) arr.push(y.balance);
+  return arr;
+}
+function yearlyContribs(sc, r){
+  const arr = [sc.startingBalance];
+  for (const y of r.yearly) arr.push(y.cumContrib);
+  return arr;
+}
+function yearlyReal(sc, r){
+  const arr = [sc.startingBalance];
+  for (const y of r.yearly){
+    const real = sc.inflationOn ? y.balance/Math.pow(1+sc.inflationPct/100, y.year) : y.balance;
+    arr.push(real);
+  }
+  return arr;
+}
+
+function ctxGrad(ctx, c1, c2, h=260){
+  const g = ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,c1); g.addColorStop(1,c2); return g;
+}
+
+/* Hover readout — shows detailed info for the hovered year below the growth chart */
+let hoverReadoutHideTimer = null;
+function resetHoverReadout(){
+  const el = document.getElementById('hoverReadout');
+  if (!el) return;
+  el.innerHTML = `<span class="hr-hint">Hover the chart to inspect any year along your journey</span>`;
+}
+function updateHoverReadout(active){
+  const el = document.getElementById('hoverReadout');
+  if (!el) return;
+  if (!active || !active.length){
+    // Debounce the reset so quick moves between points don't flash
+    clearTimeout(hoverReadoutHideTimer);
+    hoverReadoutHideTimer = setTimeout(resetHoverReadout, 150);
+    return;
+  }
+  clearTimeout(hoverReadoutHideTimer);
+  const sc = currentSc, r = currentR; if (!sc || !r) return;
+  const year = active[0].index;
+  const startBal = sc.startingBalance || 0;
+  let bal, contrib, interest, deposited, ye;
+  if (year === 0){
+    bal = startBal; contrib = startBal; interest = 0; deposited = 0;
+    ye = { year:0, deposited:0, interest:0, balance:startBal, cumContrib:startBal, cumInterest:0, phase:null };
+  } else {
+    ye = r.yearly[year-1];
+    if (!ye){ resetHoverReadout(); return; }
+    bal = ye.balance; contrib = ye.cumContrib; interest = ye.cumInterest;
+    deposited = ye.deposited;
+  }
+  const pctGrowth = startBal>0 ? ((bal/startBal)-1)*100 : 0;
+  const interestShare = bal>0 ? (interest/bal)*100 : 0;
+  const realBal = sc.inflationOn ? bal / Math.pow(1+sc.inflationPct/100, year) : bal;
+  const ph = findPhase(sc.phases, Math.max(0, year-1));
+  const phaseTxt = ph
+    ? `Phase: ${fmtCur(ph.monthlyDeposit,0)}/mo @ ${ph.annualReturnPct}%`
+    : (year===0 ? 'Starting balance' : 'No active phase');
+
+  el.innerHTML = `
+    <span class="hr-year">Y${year}</span>
+    <div class="hr-item"><span class="hr-label">Balance</span><span class="hr-val purple">${fmtFull(bal)}</span></div>
+    <div class="hr-item"><span class="hr-label">Contributed</span><span class="hr-val cyan">${fmtFull(contrib)}</span></div>
+    <div class="hr-item"><span class="hr-label">Interest</span><span class="hr-val green">${fmtFull(interest)}</span></div>
+    <div class="hr-item"><span class="hr-label">Real value</span><span class="hr-val">${fmtFull(realBal)}</span></div>
+    <div class="hr-item"><span class="hr-label">Growth</span><span class="hr-val">${pctGrowth>=0?'+':''}${pctGrowth.toFixed(1)}%</span></div>
+    <div class="hr-item"><span class="hr-label">Interest share</span><span class="hr-val">${interestShare.toFixed(0)}%</span></div>
+    <span class="hr-phase">${phaseTxt}</span>
+  `;
+}
+
+function renderCharts(sc, r){
+  const years = Array.from({length:sc.durationYears+1}, (_,i)=>i);
+  const contribs = yearlyContribs(sc, r);
+  const balances = yearlyBalances(sc, r);
+  const real = yearlyReal(sc, r);
+
+  // Cache sc/r so tooltip callbacks can access live data after updates
+  currentSc = sc; currentR = r;
+
+  /* Growth area */
+  if (!charts.growth){
+    const ctx = $('#growth').getContext('2d');
+    charts.growth = new Chart(ctx, {
+      type:'line',
+      data:{ labels:years, datasets:[
+        { label:'Contributions', data:contribs, borderColor:palette.cyan,
+          backgroundColor:ctxGrad(ctx,'rgba(8,145,178,.45)','rgba(8,145,178,.03)'),
+          fill:true, tension:.35, pointRadius:0, pointHoverRadius:5, pointHitRadius:20,
+          pointBackgroundColor:palette.cyan, pointBorderColor:'#fff', pointBorderWidth:2,
+          borderWidth:2 },
+        { label:'Balance',       data:balances, borderColor:palette.purple,
+          backgroundColor:ctxGrad(ctx,'rgba(124,58,237,.4)','rgba(219,39,119,.05)'),
+          fill:'-1', tension:.35, pointRadius:0, pointHoverRadius:6, pointHitRadius:20,
+          pointBackgroundColor:palette.purple, pointBorderColor:'#fff', pointBorderWidth:2,
+          borderWidth:2 },
+        { label:'Real value',    data:real,
+          borderColor:'rgba(15,23,42,.55)', borderDash:[4,4], fill:false, tension:.35,
+          pointRadius:0, pointHoverRadius:5, pointHitRadius:20,
+          pointBackgroundColor:'rgba(15,23,42,.8)', pointBorderColor:'#fff', pointBorderWidth:2,
+          borderWidth:1.5 }
+      ]},
+      plugins:[crosshairPlugin],
+      options:{
+        responsive:true, maintainAspectRatio:false, animation:{duration:400},
+        interaction:{ mode:'index', intersect:false, axis:'x' },
+        onHover:(evt, active)=>{ updateHoverReadout(active); },
+        plugins:{ legend:{display:false}, tooltip:{
+          enabled:true, mode:'index', intersect:false,
+          backgroundColor:palette.tooltipBg, titleColor:palette.tooltipText, bodyColor:palette.tooltipText,
+          borderColor:palette.border, borderWidth:1, padding:12, cornerRadius:10,
+          titleFont:{weight:'700', size:13}, bodyFont:{size:12}, boxPadding:6,
+          callbacks:{
+            title:(c)=>{
+              const year = Number(c[0].label);
+              const sc2 = currentSc; if (!sc2) return `Year ${year}`;
+              const ph = findPhase(sc2.phases, Math.max(0, year-1));
+              return ph
+                ? `Year ${year} — Phase (${fmtCur(ph.monthlyDeposit,0)}/mo @ ${ph.annualReturnPct}%)`
+                : `Year ${year}`;
+            },
+            label:(c)=>` ${c.dataset.label}: ${fmtFull(c.parsed.y)}`,
+            afterBody:(items)=>{
+              const sc2 = currentSc, r2 = currentR; if (!sc2 || !r2) return '';
+              const year = Number(items[0].label);
+              if (year===0) return '';
+              const ye = r2.yearly[year-1]; if (!ye) return '';
+              const start = sc2.startingBalance || 1;
+              const pctGrowth = ((ye.balance / start) - 1) * 100;
+              const interestShare = ye.balance>0 ? (ye.cumInterest/ye.balance)*100 : 0;
+              const lines = [
+                ``,
+                `This year:  + ${fmtFull(ye.deposited)} in · + ${fmtFull(ye.interest)} earned`,
+                `Since Y0:   ${pctGrowth>=0?'+':''}${pctGrowth.toFixed(1)}%  ·  Interest share: ${interestShare.toFixed(0)}%`,
+              ];
+              return lines;
+            }
+          }
+        }},
+        scales:{
+          x:{grid:{display:false}, ticks:{callback:(v)=>'Y'+v}},
+          y:{grid:{color:palette.grid}, ticks:{callback:(v)=>fmtCur(v,0)}}
+        }
+      }
+    });
+  } else {
+    charts.growth.data.labels = years;
+    charts.growth.data.datasets[0].data = contribs;
+    charts.growth.data.datasets[1].data = balances;
+    charts.growth.data.datasets[2].data = real;
+    charts.growth.update('none');
+  }
+
+  /* Donut */
+  if (!charts.donut){
+    const ctx = $('#donut').getContext('2d');
+    charts.donut = new Chart(ctx, {
+      type:'doughnut',
+      data:{ labels:['Contributions','Interest'], datasets:[{
+        data:[r.totalContrib, Math.max(0,r.totalInterest)],
+        backgroundColor:[ctxGrad(ctx,palette.cyan,'rgba(8,145,178,.5)'), ctxGrad(ctx,palette.purple,palette.pink)],
+        borderColor:'#ffffff', borderWidth:3, hoverOffset:10
+      }]},
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'72%', animation:{duration:400},
+        plugins:{ legend:{position:'bottom', labels:{boxWidth:10, padding:14, font:{size:11}}},
+          tooltip:{ backgroundColor:palette.tooltipBg, titleColor:palette.tooltipText, bodyColor:palette.tooltipText, borderColor:palette.border, borderWidth:1,
+            callbacks:{label:(c)=>` ${c.label}: ${fmtFull(c.parsed)} (${((c.parsed/(r.totalContrib+Math.max(0,r.totalInterest)))*100).toFixed(0)}%)`} } }
+      }
+    });
+  } else {
+    charts.donut.data.datasets[0].data = [r.totalContrib, Math.max(0,r.totalInterest)];
+    charts.donut.update('none');
+  }
+  $('#donutSub').textContent = `year ${sc.durationYears}`;
+
+  /* Yearly bars: deposits vs interest, + crossover year highlight */
+  const yearLbls = r.yearly.map(y=>y.year);
+  const dep = r.yearly.map(y=>y.deposited);
+  const intr = r.yearly.map(y=>y.interest);
+  let crossover = -1;
+  for (let i=0;i<r.yearly.length;i++){ if (r.yearly[i].interest > r.yearly[i].deposited){ crossover = r.yearly[i].year; break; } }
+  const barColors = intr.map((_,i)=> (r.yearly[i].year===crossover) ? 'rgba(219,39,119,.9)' : undefined);
+
+  if (!charts.bars){
+    const ctx = $('#bars').getContext('2d');
+    charts.bars = new Chart(ctx, {
+      type:'bar',
+      data:{ labels:yearLbls, datasets:[
+        { label:'Deposited', data:dep, backgroundColor:'rgba(8,145,178,.75)',
+          hoverBackgroundColor:'rgba(8,145,178,1)', borderRadius:4, stack:'a'},
+        { label:'Interest',  data:intr,
+          backgroundColor:barColors.map(c=>c||ctxGrad(ctx,palette.purple,palette.pink)),
+          hoverBackgroundColor:'rgba(124,58,237,1)', borderRadius:4, stack:'a'}
+      ]},
+      plugins:[crosshairPlugin],
+      options:{ responsive:true, maintainAspectRatio:false, animation:{duration:400},
+        interaction:{ mode:'index', intersect:false, axis:'x' },
+        plugins:{ legend:{display:true, position:'bottom', labels:{boxWidth:10, font:{size:11}}},
+          tooltip:{ mode:'index', intersect:false,
+            backgroundColor:palette.tooltipBg, titleColor:palette.tooltipText, bodyColor:palette.tooltipText,
+            borderColor:palette.border, borderWidth:1, padding:12, cornerRadius:10,
+            titleFont:{weight:'700', size:13}, bodyFont:{size:12}, boxPadding:6,
+            callbacks:{
+              title:(c)=>{
+                const year = Number(c[0].label);
+                const sc2 = currentSc; if (!sc2) return `Year ${year}`;
+                const ph = findPhase(sc2.phases, Math.max(0, year-1));
+                return ph
+                  ? `Year ${year} — ${fmtCur(ph.monthlyDeposit,0)}/mo @ ${ph.annualReturnPct}%`
+                  : `Year ${year}`;
+              },
+              label:(c)=>` ${c.dataset.label}: ${fmtFull(c.parsed.y)}`,
+              afterBody:(items)=>{
+                const year = Number(items[0].label);
+                const r2 = currentR; if (!r2) return '';
+                const ye = r2.yearly[year-1]; if (!ye) return '';
+                const total = ye.deposited + ye.interest;
+                const depPct = total>0 ? (ye.deposited/total)*100 : 0;
+                const intPct = total>0 ? (ye.interest/total)*100 : 0;
+                return [
+                  ``,
+                  `Year total: ${fmtFull(total)}`,
+                  `Deposit ${depPct.toFixed(0)}% · Interest ${intPct.toFixed(0)}%`,
+                  `Running balance: ${fmtFull(ye.balance)}`
+                ];
+              }
+            }}},
+        scales:{ x:{grid:{display:false}, ticks:{callback:(_,i)=>'Y'+yearLbls[i]}}, y:{grid:{color:palette.grid}, ticks:{callback:(v)=>fmtCur(v,0)}, stacked:true} }
+      }
+    });
+  } else {
+    charts.bars.data.labels = yearLbls;
+    charts.bars.data.datasets[0].data = dep;
+    charts.bars.data.datasets[1].data = intr;
+    charts.bars.update('none');
+  }
+
+  /* Scenario comparison */
+  renderCompareChart(sc, r);
+}
+
+function renderCompareChart(sc, r){
+  const years = Array.from({length:sc.durationYears+1}, (_,i)=>i);
+  const datasets = [];
+  datasets.push({
+    label:`${sc.name} (current)`, data: yearlyBalances(sc, r),
+    borderColor:palette.cyan, backgroundColor:'rgba(8,145,178,.1)',
+    fill:true, tension:.35, pointRadius:0, borderWidth:2.5
+  });
+
+  // Ensure current scenario gets hover styling
+  datasets[0].pointRadius = 0;
+  datasets[0].pointHoverRadius = 6;
+  datasets[0].pointHitRadius = 20;
+  datasets[0].pointBackgroundColor = palette.cyan;
+  datasets[0].pointBorderColor = '#fff';
+  datasets[0].pointBorderWidth = 2;
+
+  scenarios.forEach((s, idx) => {
+    if (!compareIds.includes(s.id)) return;
+    const sim = simulate(s);
+    // Align series length to max durationYears seen
+    const yrs = Array.from({length:s.durationYears+1}, (_,i)=>i);
+    const bals = yearlyBalances(s, sim);
+    const color = s.color || COMPARE_COLORS[idx % COMPARE_COLORS.length];
+    datasets.push({
+      label: s.name, data: bals, borderColor: color,
+      fill:false, tension:.35, pointRadius:0, borderWidth:2, borderDash: idx%2 ? [2,3] : [6,4],
+      pointHoverRadius:6, pointHitRadius:20,
+      pointBackgroundColor:color, pointBorderColor:'#fff', pointBorderWidth:2
+    });
+  });
+
+  // Use whichever series is longest for x axis
+  let maxLen = sc.durationYears+1;
+  datasets.forEach(d=>{ if (d.data.length > maxLen) maxLen = d.data.length; });
+  const xs = Array.from({length:maxLen}, (_,i)=>i);
+
+  if (!charts.compare){
+    const ctx = $('#compare').getContext('2d');
+    charts.compare = new Chart(ctx, {
+      type:'line',
+      data:{ labels: xs, datasets },
+      plugins:[crosshairPlugin],
+      options:{ responsive:true, maintainAspectRatio:false, animation:{duration:400},
+        interaction:{ mode:'index', intersect:false, axis:'x' },
+        plugins:{ legend:{display:true, position:'bottom', labels:{boxWidth:10, font:{size:11}}},
+          tooltip:{ mode:'index', intersect:false,
+            backgroundColor:palette.tooltipBg, titleColor:palette.tooltipText, bodyColor:palette.tooltipText,
+            borderColor:palette.border, borderWidth:1, padding:12, cornerRadius:10,
+            titleFont:{weight:'700', size:13}, bodyFont:{size:12}, boxPadding:6,
+            itemSort:(a,b)=> b.parsed.y - a.parsed.y,
+            callbacks:{
+              title:(c)=>`Year ${c[0].label}`,
+              label:(c)=>` ${c.dataset.label}: ${fmtFull(c.parsed.y)}`,
+              afterBody:(items)=>{
+                if (items.length < 2) return '';
+                // Show gap between best and worst series at this year
+                const vals = items.map(i=>i.parsed.y);
+                const best = Math.max(...vals), worst = Math.min(...vals);
+                const gap = best - worst;
+                const pct = worst>0 ? ((best/worst)-1)*100 : 0;
+                return ['', `Spread: ${fmtFull(gap)}  (top is ${pct.toFixed(0)}% above bottom)`];
+              }
+            }}},
+        scales:{ x:{grid:{display:false}, ticks:{callback:(v)=>'Y'+v}}, y:{grid:{color:palette.grid}, ticks:{callback:(v)=>fmtCur(v,0)}} }
+      }
+    });
+  } else {
+    charts.compare.data.labels = xs;
+    charts.compare.data.datasets = datasets;
+    charts.compare.update('none');
+  }
+}
+
+function phaseColor(i, len){
+  if (i===0) return '';                // default cyan
+  if (i===len-1 && state.phases[i].monthlyDeposit===0) return 'zero';
+  return 'purple';
+}
+
+function renderPhases(sc){
+  const host = $('#phasesList');
+  host.innerHTML = '';
+  sc.phases.forEach((p, i) => {
+    const colorKey = p.monthlyDeposit === 0 ? 'zero' : (i % 2 === 0 ? '' : 'purple');
+    const div = document.createElement('div');
+    div.className = 'phase';
+    if (colorKey) div.setAttribute('data-color', colorKey);
+    const contribs = p.monthlyDeposit*12*(p.endYear-p.startYear) * (p.depositGrowthPct===0 ? 1 : ((Math.pow(1+p.depositGrowthPct/100, p.endYear-p.startYear)-1)/(p.depositGrowthPct/100*(p.endYear-p.startYear))));
+    div.innerHTML = `
+      <div class="phase-head">
+        <div class="phase-title">Phase ${i+1} <small>Years ${p.startYear} – ${p.endYear}</small></div>
+        <div class="phase-amt">${fmtCur(p.monthlyDeposit,0)}<small>/mo</small></div>
+      </div>
+      <div class="phase-meta">
+        <span>Rate <b>${p.annualReturnPct}%</b></span>·
+        <span>Grow <b>${p.depositGrowthPct}%/yr</b></span>·
+        <span>Contribs <b>${fmtCur(contribs,0)}</b></span>
+      </div>
+      <div class="phase-edit">
+        <div class="row row3">
+          <div><label>Start year</label><input class="input" type="number" data-pfield="startYear" value="${p.startYear}" min="0"></div>
+          <div><label>End year</label><input class="input" type="number" data-pfield="endYear" value="${p.endYear}" min="1"></div>
+          <div><label>Monthly $</label><input class="input" type="number" data-pfield="monthlyDeposit" value="${p.monthlyDeposit}" step="100"></div>
+        </div>
+        <div class="row">
+          <div><label>Return % p.a.</label><input class="input" type="number" data-pfield="annualReturnPct" value="${p.annualReturnPct}" step="0.1"></div>
+          <div><label>Deposit escalation %/yr</label><input class="input" type="number" data-pfield="depositGrowthPct" value="${p.depositGrowthPct}" step="0.5"></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end"><button class="delete" data-pdelete="${p.id}">Delete phase</button></div>
+      </div>
+    `;
+    div.addEventListener('click', (e)=>{
+      if (e.target.closest('.phase-edit') || e.target.dataset.pdelete) return;
+      div.classList.toggle('editing');
+    });
+    div.querySelectorAll('[data-pfield]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        const key = inp.dataset.pfield;
+        const val = parseFloat(inp.value);
+        if (isFinite(val)) { p[key] = val; debouncedQuickRender(); }
+      });
+    });
+    const delBtn = div.querySelector('[data-pdelete]');
+    if (delBtn){
+      delBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        state.phases = state.phases.filter(x => x.id !== p.id);
+        render();
+      });
+    }
+    host.appendChild(div);
+  });
+}
+
+function renderLumpSums(){
+  const host = $('#lumpsList');
+  host.innerHTML = '';
+  state.lumpSums.forEach(ls => {
+    const row = document.createElement('div');
+    row.className = 'lump';
+    row.innerHTML = `
+      <input type="text" data-lfield="label" value="${(ls.label||'Bonus').replace(/"/g,'&quot;')}" placeholder="Label">
+      <input type="number" data-lfield="atYear" value="${ls.atYear}" min="0" max="${state.durationYears}" placeholder="Year">
+      <input type="number" data-lfield="amount" value="${ls.amount}" step="500" placeholder="Amount $">
+      <button class="x" title="Remove">✕</button>
+    `;
+    row.querySelectorAll('[data-lfield]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        const key = inp.dataset.lfield;
+        ls[key] = (key==='label') ? inp.value : parseFloat(inp.value);
+        debouncedQuickRender();
+      });
+    });
+    row.querySelector('.x').addEventListener('click', ()=>{
+      state.lumpSums = state.lumpSums.filter(x => x.id !== ls.id);
+      render();
+    });
+    host.appendChild(row);
+  });
+}
+
+function renderTimeline(sc, r){
+  const track = $('#timelineTrack');
+  const axis = $('#timelineAxis');
+  const markers = $('#timelineMarkers');
+  const D = sc.durationYears;
+  // Build flex grid
+  // Gather phase spans; fill gaps with "no-deposit" segments
+  const segments = [];
+  let cursor = 0;
+  const sorted = [...sc.phases].sort((a,b)=>a.startYear-b.startYear);
+  for (const p of sorted){
+    if (p.startYear > cursor) segments.push({ startYear:cursor, endYear:p.startYear, monthlyDeposit:0, gap:true });
+    segments.push({ ...p, gap:false });
+    cursor = p.endYear;
+  }
+  if (cursor < D) segments.push({ startYear:cursor, endYear:D, monthlyDeposit:0, gap:true });
+
+  track.style.gridTemplateColumns = segments.map(s => `${s.endYear - s.startYear}fr`).join(' ');
+  track.innerHTML = '';
+  segments.forEach((s, i) => {
+    const phaseCls = s.gap ? 'tp0' : (s.monthlyDeposit===0 ? 'tp0' : (['tp1','tp2','tp3'][i%3]));
+    const seg = document.createElement('div');
+    seg.className = `timeline-phase ${phaseCls}`;
+    seg.innerHTML = s.monthlyDeposit
+      ? `${fmtCur(s.monthlyDeposit,0)}/mo<small>${s.startYear}–${s.endYear}y</small>`
+      : `<span style="opacity:.8">no deposit</span><small>${s.startYear}–${s.endYear}y</small>`;
+    track.appendChild(seg);
+  });
+
+  // Lump sum markers
+  markers.innerHTML = '';
+  sc.lumpSums.forEach(ls => {
+    const pct = Math.max(0, Math.min(1, ls.atYear / D)) * 100;
+    const el = document.createElement('div');
+    el.className = 'marker';
+    el.style.left = pct + '%';
+    el.innerHTML = `<div class="lbl">+${fmtCur(ls.amount,0)}</div><div class="pin">★</div>`;
+    markers.appendChild(el);
+  });
+
+  // Axis (5-year gridlines)
+  const step = D<=12 ? 2 : (D<=30 ? 5 : 10);
+  const cols = [];
+  for (let y=0; y<=D; y+=step){ cols.push(`<span>Y${y}</span>`); }
+  if ((D % step) !== 0) cols.push(`<span>Y${D}</span>`);
+  axis.style.gridTemplateColumns = `repeat(${cols.length}, 1fr)`;
+  axis.innerHTML = cols.join('');
+
+  $('#timelineHorizon').textContent = `→ ${D}‑year horizon`;
+  $('#timelineTotal').textContent = fmtFull(r.totalContrib);
+  $('#timelineSub').textContent = `${sc.phases.length} phase(s) · ${sc.lumpSums.length} lump sum(s)`;
+}
+
+function renderBreakdown(sc, r){
+  const host = $('#yearTable');
+  host.innerHTML = '';
+  r.yearly.forEach(y => {
+    const real = sc.inflationOn ? y.balance/Math.pow(1+sc.inflationPct/100, y.year) : y.balance;
+    let afterTax = y.balance;
+    if (sc.taxOn && sc.taxMode==='endCGT' && y.year===sc.durationYears){
+      const gain = y.balance - y.cumContrib;
+      if (gain>0) afterTax = y.balance - gain*(sc.taxRatePct/100);
+    }
+    const phaseName = y.phase ? `Phase ${sc.phases.findIndex(p=>p.id===y.phase.id)+1}` : '—';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${y.year}</td>
+      <td><span style="color:var(--purple)">● ${phaseName}</span></td>
+      <td>${fmtFull(y.deposited)}</td>
+      <td class="up">${fmtFull(y.interest)}</td>
+      <td><b>${fmtFull(y.balance)}</b></td>
+      <td>${fmtFull(real)}</td>
+      <td>${fmtFull(afterTax)}</td>
+    `;
+    host.appendChild(tr);
+  });
+}
+
+function renderScenarioPills(){
+  const host = $('#scenPills');
+  host.innerHTML = '';
+  scenarios.forEach(s => {
+    const pill = document.createElement('div');
+    const isCurrent = s.id === state.id;
+    pill.className = 'scen-pill'
+      + (compareIds.includes(s.id) ? ' active' : '')
+      + (isCurrent ? ' current' : '');
+    pill.title = isCurrent ? 'This is the currently loaded scenario' : 'Click to toggle on comparison chart';
+    pill.innerHTML = `
+      <span class="sw" style="background:${s.color}"></span>
+      <span class="scen-name">${escapeHtml(s.name)}${isCurrent ? ' <small style="color:var(--cyan);font-weight:700">· live</small>' : ''}</span>
+      <span class="dots" title="More…">⋯</span>
+      <span class="x" title="Delete">✕</span>`;
+    pill.addEventListener('click', (e)=>{
+      if (e.target.classList.contains('x')){
+        if (!confirm(`Delete scenario "${s.name}"?`)) return;
+        scenarios = scenarios.filter(x => x.id !== s.id);
+        compareIds = compareIds.filter(id => id !== s.id);
+        persistScenarios(); persistCompareIds(); render();
+        toast(`Deleted "${s.name}"`);
+        return;
+      }
+      if (e.target.classList.contains('dots')){
+        e.stopPropagation();
+        openScenarioMenu(s, pill);
+        return;
+      }
+      if (compareIds.includes(s.id)) compareIds = compareIds.filter(id => id !== s.id);
+      else compareIds.push(s.id);
+      persistCompareIds(); render();
+    });
+    host.appendChild(pill);
+  });
+  const add = document.createElement('div');
+  add.className = 'scen-pill';
+  add.style.borderStyle = 'dashed';
+  add.style.color = 'var(--text-dim)';
+  add.innerHTML = '＋ Save current';
+  add.title = 'Save the current working scenario as a named snapshot';
+  add.addEventListener('click', saveCurrent);
+  host.appendChild(add);
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---------- Per-scenario menu ---------- */
+function openScenarioMenu(s, anchorEl){
+  closeScenarioMenu();
+  const rect = anchorEl.getBoundingClientRect();
+  const backdrop = document.createElement('div');
+  backdrop.className = 'scen-menu-backdrop';
+  backdrop.addEventListener('click', closeScenarioMenu);
+
+  const menu = document.createElement('div');
+  menu.className = 'scen-menu';
+  menu.id = 'scenMenu';
+  menu.style.top = (window.scrollY + rect.bottom + 6) + 'px';
+  menu.style.left = (window.scrollX + Math.max(8, rect.left)) + 'px';
+  menu.innerHTML = `
+    <button data-act="load">📂 Load into editor</button>
+    <button data-act="dup">🧬 Duplicate</button>
+    <button data-act="rename">✏️ Rename</button>
+    <button data-act="color">🎨 Change color</button>
+    <button data-act="update">💾 Update from current</button>
+    <hr>
+    <button data-act="export">📤 Export as JSON</button>
+    <button data-act="share">🔗 Copy share link</button>
+    <hr>
+    <button data-act="delete" class="danger">🗑 Delete</button>
+  `;
+  menu.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button'); if (!btn) return;
+    const act = btn.dataset.act;
+    closeScenarioMenu();
+    handleScenarioAction(act, s);
+  });
+  document.body.appendChild(backdrop);
+  document.body.appendChild(menu);
+  // Re-clamp if off-screen right
+  const mr = menu.getBoundingClientRect();
+  if (mr.right > window.innerWidth - 8){
+    menu.style.left = (window.scrollX + window.innerWidth - mr.width - 8) + 'px';
+  }
+}
+function closeScenarioMenu(){
+  document.querySelectorAll('.scen-menu,.scen-menu-backdrop').forEach(el=>el.remove());
+}
+function handleScenarioAction(act, s){
+  if (act === 'load'){
+    if (s.id === state.id){ toast('Already loaded'); return; }
+    // Confirm if current has unsaved changes (simple: just ask)
+    const ok = confirm(`Load "${s.name}" into the editor? Your current working scenario will be replaced (saved scenarios untouched).`);
+    if (!ok) return;
+    state = clone(s);
+    persistState(); render();
+    toast(`Loaded "${s.name}"`);
+  } else if (act === 'dup'){
+    const copy = clone(s);
+    copy.id = uid();
+    copy.name = `${s.name} (copy)`;
+    copy.color = COMPARE_COLORS[scenarios.length % COMPARE_COLORS.length];
+    scenarios.push(copy);
+    compareIds.push(copy.id);
+    persistScenarios(); persistCompareIds(); render();
+    toast(`Duplicated as "${copy.name}"`);
+  } else if (act === 'rename'){
+    const next = prompt('Rename scenario:', s.name);
+    if (!next || next.trim() === s.name) return;
+    s.name = next.trim();
+    persistScenarios(); render();
+    toast('Renamed');
+  } else if (act === 'color'){
+    const i = COMPARE_COLORS.indexOf(s.color);
+    s.color = COMPARE_COLORS[(i+1 + COMPARE_COLORS.length) % COMPARE_COLORS.length];
+    persistScenarios(); render();
+  } else if (act === 'update'){
+    if (!confirm(`Overwrite "${s.name}" with the current working scenario?`)) return;
+    const keepId = s.id, keepColor = s.color;
+    const idx = scenarios.findIndex(x => x.id === keepId);
+    if (idx >= 0){
+      const upd = clone(state);
+      upd.id = keepId; upd.name = s.name; upd.color = keepColor;
+      scenarios[idx] = upd;
+      persistScenarios(); render();
+      toast(`Updated "${s.name}"`);
+    }
+  } else if (act === 'export'){
+    exportScenarioJSON(s);
+  } else if (act === 'share'){
+    const hash = LZString.compressToEncodedURIComponent(JSON.stringify(s));
+    const url = `${location.origin}${location.pathname}#${hash}`;
+    navigator.clipboard?.writeText(url).then(
+      ()=>toast('Link copied — open to load it'),
+      ()=>prompt('Copy this link:', url)
+    );
+  } else if (act === 'delete'){
+    if (!confirm(`Delete "${s.name}"?`)) return;
+    scenarios = scenarios.filter(x => x.id !== s.id);
+    compareIds = compareIds.filter(id => id !== s.id);
+    persistScenarios(); persistCompareIds(); render();
+    toast(`Deleted "${s.name}"`);
+  }
+}
+// Close menu on escape / scroll
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeScenarioMenu(); });
+window.addEventListener('scroll', closeScenarioMenu, true);
+
+function renderGoalBanner(solved, r){
+  const b = $('#goalBanner');
+  if (solved !== null){
+    b.classList.add('on');
+    b.innerHTML = `🎯 Goal‑seek: to reach <b>${fmtFull(state.goalSeek.targetFinalBalance)}</b> in ${state.durationYears} years, deposit <b>${fmtFull(solved)}/mo</b> during phase 1. (All other phases held constant.)`;
+  } else {
+    b.classList.remove('on');
+  }
+}
+
+function renderSWP(sc, r){
+  const box = $('#swpResult');
+  if (!sc.withdrawal.enabled){ box.classList.remove('on'); return; }
+  const swp = simulateSWP(r.finalBalance, sc.withdrawal, sc.inflationPct);
+  box.classList.add('on');
+  $('#swpTotal').textContent = fmtFull(swp.totalWithdrawn);
+  $('#swpEnd').textContent = fmtFull(swp.finalBalance);
+  const depRow = $('#swpDepRow');
+  if (swp.depletedAtMonth){
+    const yrs = (swp.depletedAtMonth/12).toFixed(1);
+    $('#swpDep').innerHTML = `<span class="warn">depleted at year ${yrs}</span>`;
+  } else {
+    $('#swpDep').innerHTML = `<span class="ok">${sc.withdrawal.durationYears} yrs + ${fmtFull(swp.finalBalance)} left</span>`;
+  }
+}
+
+/* ---------- input binding ---------- */
+const debouncedRender = debounce(render, 120);
+
+function $(sel){ return document.querySelector(sel); }
+function $$(sel){ return document.querySelectorAll(sel); }
+
+function bindInputs(){
+  // Currency
+  $('#currency').addEventListener('change', (e)=>{
+    state.currency = e.target.value;
+    updateCurrencyUI();
+    render();
+  });
+
+  // Base
+  bindNum('#startingBalance', 'startingBalance');
+  bindNum('#durationYears', 'durationYears');
+  bindSelect('#compoundFreq', 'compoundFreq', false);
+  bindRange('#defaultReturnPct', 'defaultReturnPct', '#defaultRateLabel');
+
+  // Inflation / tax
+  bindToggle('#tglInflation', 'inflationOn');
+  bindRange('#inflationPct', 'inflationPct', '#inflationLabel');
+  bindToggle('#tglTax', 'taxOn');
+  bindSelect('#taxMode', 'taxMode', false);
+  bindRange('#taxRatePct', 'taxRatePct', '#taxRateLabel');
+
+  // Goal seek
+  $('#tglGoal').addEventListener('click', ()=>{
+    state.goalSeek.enabled = !state.goalSeek.enabled;
+    $('#tglGoal').classList.toggle('on', state.goalSeek.enabled);
+    if (state.goalSeek.enabled){ setMode('goal'); }
+    render();
+  });
+  $('#goalTarget').addEventListener('input', (e)=>{
+    const v = parseFloat(e.target.value); if (isFinite(v)) state.goalSeek.targetFinalBalance = v; debouncedRender();
+  });
+
+  // SWP
+  $('#tglSWP').addEventListener('click', ()=>{
+    state.withdrawal.enabled = !state.withdrawal.enabled;
+    $('#tglSWP').classList.toggle('on', state.withdrawal.enabled);
+    if (state.withdrawal.enabled){ setMode('swp'); }
+    render();
+  });
+  ['swpAmount:monthlyAmount','swpDuration:durationYears','swpEscalate:escalatePct','swpReturn:postRetireReturnPct'].forEach(pair=>{
+    const [selId, key] = pair.split(':');
+    $('#'+selId).addEventListener('input', (e)=>{
+      const v = parseFloat(e.target.value); if (isFinite(v)) state.withdrawal[key] = v; debouncedRender();
+    });
+  });
+
+  // Lump sums
+  $('#addLump').addEventListener('click', ()=>{
+    state.lumpSums.push({ id:uid(), atYear: Math.min(1, state.durationYears), atMonth:1, amount:5000, label:'Bonus' });
+    render();
+  });
+
+  // Phases
+  $('#addPhase').addEventListener('click', ()=>{
+    const last = state.phases[state.phases.length-1];
+    const start = last ? last.endYear : 0;
+    const end = Math.min(state.durationYears, start+5);
+    if (end<=start){ toast('Extend duration to add more phases'); return; }
+    state.phases.push({ id:uid(), startYear:start, endYear:end, monthlyDeposit:500, depositGrowthPct:0, annualReturnPct:state.defaultReturnPct });
+    render();
+  });
+
+  // Tabs
+  $$('#tabs .tab').forEach(btn => btn.addEventListener('click', ()=>{
+    $$('#tabs .tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const id = btn.dataset.tab;
+    $$('[data-tabpanel]').forEach(p => p.hidden = (p.dataset.tabpanel !== id));
+  }));
+
+  // Mode seg
+  $$('#modeSeg button').forEach(b => b.addEventListener('click', ()=>setMode(b.dataset.mode)));
+
+  // Top actions
+  $('#saveBtn').addEventListener('click', saveCurrent);
+  $('#saveCurrentBtn').addEventListener('click', saveCurrent);
+  $('#shareBtn').addEventListener('click', share);
+  $('#csvBtn').addEventListener('click', exportCSV);
+  $('#printBtn').addEventListener('click', ()=>window.print());
+  $('#resetBtn').addEventListener('click', ()=>{ if (confirm('Reset current scenario to defaults?')){ state = defaultScenario(); hydrateInputs(); render(); } });
+  $('#loadDefaults').addEventListener('click', (e)=>{ e.preventDefault(); state = defaultScenario(); hydrateInputs(); render(); });
+}
+
+function bindNum(sel, key){
+  const el = $(sel);
+  el.addEventListener('input', (e)=>{ const v = parseFloat(e.target.value); if (isFinite(v)) { state[key]=v; debouncedRender(); } });
+}
+function bindSelect(sel, key){
+  $(sel).addEventListener('change', (e)=>{ state[key]=e.target.value; render(); });
+}
+function bindRange(sel, key, labelSel){
+  const el = $(sel);
+  el.addEventListener('input', (e)=>{
+    const v = parseFloat(e.target.value);
+    state[key] = v;
+    if (labelSel) $(labelSel).textContent = v.toFixed(1);
+    debouncedRender();
+  });
+}
+function bindToggle(sel, key){
+  $(sel).addEventListener('click', ()=>{ state[key] = !state[key]; $(sel).classList.toggle('on', state[key]); render(); });
+}
+
+function updateCurrencyUI(){
+  const cur = currentCurrency();
+  const sym = cur.symbol;
+  // Pad input left-edge based on symbol width so long prefixes (Rs, AED, SAR) don't overlap the number
+  const padLeft = Math.max(30, 14 + sym.length * 8);
+  $$('.cur-prefix').forEach(el => {
+    el.setAttribute('data-prefix', sym);
+    const input = el.querySelector('.input');
+    if (input) input.style.paddingLeft = padLeft + 'px';
+  });
+  const hint = $('#currencyHint');
+  if (hint) hint.textContent = cur.numbering === 'indian' ? 'Lakh & Crore' : 'thousands / millions';
+}
+
+function hydrateInputs(){
+  if (!state.currency) state.currency = 'USD';
+  $('#currency').value = state.currency;
+  $('#startingBalance').value = state.startingBalance;
+  $('#durationYears').value = state.durationYears;
+  $('#compoundFreq').value = state.compoundFreq;
+  $('#defaultReturnPct').value = state.defaultReturnPct;
+  $('#defaultRateLabel').textContent = state.defaultReturnPct.toFixed(1);
+  $('#inflationPct').value = state.inflationPct;
+  $('#inflationLabel').textContent = state.inflationPct.toFixed(1);
+  $('#tglInflation').classList.toggle('on', !!state.inflationOn);
+  $('#taxMode').value = state.taxMode;
+  $('#taxRatePct').value = state.taxRatePct;
+  $('#taxRateLabel').textContent = state.taxRatePct.toFixed(1);
+  $('#tglTax').classList.toggle('on', !!state.taxOn);
+  $('#tglGoal').classList.toggle('on', !!state.goalSeek.enabled);
+  $('#goalTarget').value = state.goalSeek.targetFinalBalance;
+  $('#tglSWP').classList.toggle('on', !!state.withdrawal.enabled);
+  $('#swpAmount').value = state.withdrawal.monthlyAmount;
+  $('#swpDuration').value = state.withdrawal.durationYears;
+  $('#swpEscalate').value = state.withdrawal.escalatePct;
+  $('#swpReturn').value = state.withdrawal.postRetireReturnPct;
+}
+
+function setMode(m){
+  mode = m;
+  $$('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode===m));
+  if (m==='goal'){ $$('#tabs .tab').forEach(b => b.classList.toggle('active', b.dataset.tab==='advanced')); $$('[data-tabpanel]').forEach(p => p.hidden = p.dataset.tabpanel!=='advanced'); }
+  if (m==='swp'){ $$('#tabs .tab').forEach(b => b.classList.toggle('active', b.dataset.tab==='withdraw')); $$('[data-tabpanel]').forEach(p => p.hidden = p.dataset.tabpanel!=='withdraw'); }
+  if (m==='accum'){ /* keep current tab */ }
+}
+
+/* ---------- actions ---------- */
+function saveCurrent(){
+  const name = prompt('Name this scenario:', state.name || 'My plan');
+  if (!name) return;
+  const saved = clone(state);
+  saved.id = uid();
+  saved.name = name;
+  saved.color = COMPARE_COLORS[scenarios.length % COMPARE_COLORS.length];
+  scenarios.push(saved);
+  compareIds.push(saved.id);
+  persistScenarios(); persistCompareIds();
+  toast(`Saved "${name}"`);
+  render();
+}
+function share(){
+  const hash = LZString.compressToEncodedURIComponent(JSON.stringify(state));
+  const url = `${location.origin}${location.pathname}#${hash}`;
+  navigator.clipboard?.writeText(url).then(()=>toast('Link copied — paste anywhere'), ()=>prompt('Copy this link:', url));
+}
+function exportCSV(){
+  const r = simulate(state);
+  const lines = [];
+  lines.push(['# CompoundX export', new Date().toISOString()].join(','));
+  lines.push(['# Scenario', state.name].join(','));
+  lines.push(['# Starting', state.startingBalance, 'Duration', state.durationYears, 'Compound', state.compoundFreq, 'DefaultRate%', state.defaultReturnPct].join(','));
+  lines.push('');
+  lines.push(['Year','Phase','Deposited','Interest','Balance','RealValue','AfterTax'].join(','));
+  r.yearly.forEach(y => {
+    const real = state.inflationOn ? y.balance/Math.pow(1+state.inflationPct/100, y.year) : y.balance;
+    let at = y.balance;
+    if (state.taxOn && state.taxMode==='endCGT' && y.year===state.durationYears){
+      const g = y.balance - y.cumContrib; if (g>0) at = y.balance - g*(state.taxRatePct/100);
+    }
+    const pi = state.phases.findIndex(p => y.phase && p.id===y.phase.id);
+    lines.push([y.year, pi>=0?`P${pi+1}`:'-', y.deposited.toFixed(2), y.interest.toFixed(2), y.balance.toFixed(2), real.toFixed(2), at.toFixed(2)].join(','));
+  });
+  const blob = new Blob([lines.join('\n')], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `compoundx-${state.name.replace(/\s+/g,'_')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV downloaded');
+}
+
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+/* ---------- init ---------- */
+function init(){
+  bindInputs();
+  hydrateInputs();
+  updateCurrencyUI();
+  render();
+}
+init();
+</script>
+</body>
+</html>
