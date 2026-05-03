@@ -192,12 +192,39 @@
   .lump-head .x{width:28px;height:28px;border-radius:8px;background:rgba(220,38,38,.08);border:none;color:var(--red);cursor:pointer;font-weight:700;font-size:13px;display:grid;place-items:center;transition:all .14s}
   .lump-head .x:hover{background:rgba(220,38,38,.18)}
   .lump-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .lump-grid.with-until{grid-template-columns:repeat(3,minmax(0,1fr))}
   .lump-card .field label{font-size:11px;color:var(--text-dim);font-weight:600;margin-bottom:4px;display:block}
   .lump-card .field input,
   .lump-card .field select{width:100%;padding:8px 10px;font-size:13px;border-radius:8px;border:1px solid var(--border);background:#fff}
   .lump-card .field select{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%23516079' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px}
   .lump-preview{font-size:11px;color:var(--text-dim);margin-top:8px;padding:6px 10px;background:rgba(124,58,237,.06);border-radius:6px;font-family:'JetBrains Mono',ui-monospace,monospace}
+  .lump-preview.warn{background:rgba(220,38,38,.10);color:var(--red)}
+
+  /* Rent vs buy explainer + legend + summary */
+  .rvb-help{font-size:12px;color:var(--text-dim);background:rgba(124,58,237,.05);border-radius:8px;padding:10px 12px;margin-bottom:10px;line-height:1.55}
+  .rvb-help b{color:var(--text)}
+  .rvb-legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:8px;font-size:12px;color:var(--text-dim);font-weight:600}
+  .rvb-leg-item{display:flex;align-items:center;gap:6px}
+  .rvb-dot{width:14px;height:14px;border-radius:3px;display:inline-block}
+  .rvb-summary{margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(5,150,105,.06);font-size:12.5px;color:var(--text);line-height:1.5}
+  .rvb-summary.lose{background:rgba(124,58,237,.06)}
+  .rvb-summary b{font-weight:700}
+  .rvb-summary .rvb-win{font-size:13.5px;font-weight:700;display:block;margin-bottom:4px}
+  .rvb-summary .rvb-win.green{color:var(--green)}
+  .rvb-summary .rvb-win.purple{color:var(--purple)}
+
+  /* Bank prepayment cap card */
+  .cap-card{border:1px solid var(--border);border-radius:12px;padding:10px 12px 12px;background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(124,58,237,.06));margin-bottom:6px}
+  .cap-head{display:flex;align-items:center;gap:10px}
+  .cap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+  .cap-grid .field label{font-size:11px;color:var(--text-dim);font-weight:600;margin-bottom:4px;display:block}
+  .cap-grid .field input,
+  .cap-grid .field select{width:100%;padding:8px 10px;font-size:13px;border-radius:8px;border:1px solid var(--border);background:#fff}
+  .cap-grid .field select{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%23516079' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px}
+
+  /* Input with right-side suffix (e.g. %) */
+  .input-suffix{position:relative}
+  .input-suffix::after{content:attr(data-suffix);position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text-dim);font-weight:700;pointer-events:none}
+  .input-suffix .input{padding-right:32px}
 
   .empty-hint{font-size:12px;color:var(--text-faint);font-style:italic;padding:8px;text-align:center;border:1px dashed var(--border);border-radius:8px;margin-bottom:8px}
 
@@ -416,7 +443,35 @@
         <div class="adv-panel active" data-advpanel="prepay">
           <div class="adv-help">Add an <b>extra monthly amount</b> toward principal and/or <b>one‑time or recurring lump‑sum</b> payments. You'll see how much time and interest you save vs. paying only the regular EMI.</div>
 
-          <div class="input-row">
+          <!-- Bank prepayment cap -->
+          <div class="cap-card">
+            <div class="cap-head">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="toggle" id="tglPrepayCap"></div>
+                <div>
+                  <div style="font-weight:700;font-size:13px">Bank prepayment cap</div>
+                  <div style="font-size:11px;color:var(--text-dim)">Most banks let you prepay <b>free</b> up to a yearly limit. Beyond it, an early-settlement fee applies, so this calculator <b>blocks excess</b> prepayments.</div>
+                </div>
+              </div>
+            </div>
+            <div id="capControls" class="cap-grid" style="display:none">
+              <div class="field">
+                <label>Free limit per year</label>
+                <div class="input-suffix" data-suffix="%"><input class="input" id="capPctPerYear" type="number" step="1" min="0" max="100" value="30"></div>
+                <span class="hint">UAE banks: <b>20–30%</b> typical. Some allow up to 100%. Confirm with your bank.</span>
+              </div>
+              <div class="field">
+                <label>Apply % to</label>
+                <select class="input" id="capBasis">
+                  <option value="original">Original loan amount</option>
+                  <option value="outstanding">Outstanding balance (each year)</option>
+                </select>
+                <span class="hint">"<b>Original</b>" = same ceiling every year. "<b>Outstanding</b>" = ceiling shrinks as you pay down.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="input-row" style="margin-top:14px">
             <div class="field">
               <label>Extra per month</label>
               <div class="input-prefix cur-prefix" data-prefix="AED"><input class="input" id="extraMonthly" type="number" step="100" min="0" value="0"></div>
@@ -618,6 +673,12 @@
           <div class="val" id="statUpfront">0</div>
           <span class="val-exact" id="statUpfrontExact">0</span>
         </div>
+        <div class="stat glass" id="statSavingsCard" style="display:none;background:linear-gradient(135deg,rgba(5,150,105,.10),rgba(245,158,11,.06))">
+          <div class="lbl">Prepayment savings <span class="sub" style="font-weight:500;text-transform:none;letter-spacing:0;margin-left:6px">vs paying only the EMI</span></div>
+          <div class="val" id="statSavings">0</div>
+          <span class="val-exact" id="statSavingsExact">0</span>
+          <div class="sub" id="statSavingsSub">—</div>
+        </div>
         <div class="stat glass" id="statRentalCard" style="display:none;background:linear-gradient(135deg,rgba(5,150,105,.06),rgba(124,58,237,.06))">
           <div class="lbl">Net monthly EMI <span class="sub" style="font-weight:500;text-transform:none;letter-spacing:0;margin-left:6px">after rent · year 1</span></div>
           <div class="val" id="statNetEmi">0</div>
@@ -678,8 +739,19 @@
 
       <!-- Rent vs Buy chart (conditional) -->
       <div class="card glass" id="rentVsBuyCard" style="display:none">
-        <h4>Rent vs buy — net position <span class="sub" id="rentChartSub"></span></h4>
+        <h4>Buy vs rent + invest <span class="sub" id="rentChartSub"></span></h4>
+        <div class="rvb-help">
+          Compares <b>two paths</b> for the same upfront cash.
+          <b style="color:var(--green)">BUY</b> = property equity (price growth + paid-down loan) minus all interest + upfront fees paid.
+          <b style="color:var(--purple)">RENT + INVEST</b> = upfront cash invested at your assumed return rate, minus rent paid each year.
+          The line that's <b>higher</b> is winning. Where they cross is your <b>break-even year</b>.
+        </div>
+        <div class="rvb-legend">
+          <div class="rvb-leg-item"><span class="rvb-dot" style="background:#059669"></span> If you <b>BUY</b> the property</div>
+          <div class="rvb-leg-item"><span class="rvb-dot" style="background:#7c3aed;border:2px dashed #7c3aed;background:transparent"></span> If you <b>RENT + invest</b> the difference</div>
+        </div>
         <div class="chart-wrap"><canvas id="chartRent"></canvas></div>
+        <div id="rvbSummary" class="rvb-summary"></div>
       </div>
 
       <!-- Breakdown table -->
@@ -779,6 +851,11 @@ function defaultScenario(){
     ratePhases: [],
     extraMonthly: 0,
     lumps: [],
+    // Bank prepayment cap — most UAE/GCC banks allow free prepayment up to a % of
+    // loan per calendar year. Extra above that triggers an early-settlement fee.
+    //   pctPerYear – yearly free prepayment limit (default 30%)
+    //   basis      – 'original' = % of original loan; 'outstanding' = % of balance at year start
+    prepayCap: { enabled:true, pctPerYear:30, basis:'original' },
     settle: { enabled:false, atYear:5, feePct:1, feeCap:10000 },
     rent: { enabled:false, monthly:7500, escalatePct:5, investReturnPct:6, appreciatePct:3 },
     // Rental income (rent-out-the-property scenario):
@@ -814,9 +891,10 @@ function hydrate(sc){
   s.settle = Object.assign({}, d.settle, sc.settle||{});
   s.rent = Object.assign({}, d.rent, sc.rent||{});
   s.rental = Object.assign({}, d.rental, sc.rental||{});
+  s.prepayCap = Object.assign({}, d.prepayCap, sc.prepayCap||{});
   s.ratePhases = Array.isArray(sc.ratePhases) ? sc.ratePhases : [];
   s.lumps = (Array.isArray(sc.lumps) ? sc.lumps : []).map(lp => Object.assign({
-    id: uid(), label:'', atYear:1, atMonth:0, amount:0, recur:'once', untilYear:null
+    id: uid(), label:'', atYear:1, atMonth:1, amount:0, recur:'once', untilYear:null
   }, lp));
   return s;
 }
@@ -918,10 +996,28 @@ function simulate(sc, opts={}){
   const rentalApplies = rentalOn && sc.rental.applyToMortgage;
   let totalRentGross = 0, totalRentNet = 0, totalRentAppliedToPrincipal = 0;
 
+  // Bank prepayment cap — limits combined extra prepayment per loan-year.
+  const capCfg = sc.prepayCap || {};
+  const capEnabled = !!capCfg.enabled && !opts.ignorePrepayments;
+  const capPct = capEnabled ? Math.max(0, (capCfg.pctPerYear || 0)) / 100 : 0;
+  const capBasis = capCfg.basis === 'outstanding' ? 'outstanding' : 'original';
+  let yearStartBalance = balance;          // snapshot at start of current loan-year
+  let yearPrepayCount = 0;                 // running total of prepayments applied this year
+  let totalPrepayBlocked = 0;              // amount the cap prevented from going to principal
+  const yearsCapped = new Set();           // 1-indexed loan years where cap was hit
+
   let payoffMonth = n;
   let hitSettlement = null;
 
   for (let m = 1; m <= n; m++){
+    // Loan-year boundary: snapshot balance and reset yearly prepay accumulator.
+    // m=1, 13, 25, ... are first months of loan-years 1, 2, 3, ...
+    if ((m - 1) % 12 === 0){
+      yearStartBalance = balance;
+      yearPrepayCount = 0;
+    }
+    const curYear = Math.floor((m - 1) / 12) + 1;
+
     // Rate phase boundary check — recompute PMT if the rate changed this month
     const newRate = rateAtMonth(m-1, sc);
     if (Math.abs(newRate - curRate) > 1e-12){
@@ -935,11 +1031,12 @@ function simulate(sc, opts={}){
     let principal = curPmt - interest;
     if (principal < 0) principal = 0;  // guard
 
-    // Apply extra monthly principal
-    let extraThisMonth = extra;
+    // Build extra-principal components separately so we can cap fairly.
+    let extraFromMonthly  = extra;          // user's "extra per month" amount
+    let extraFromLump     = 0;              // sum of any lumps that fire this month
+    let rentGrossThisMonth = 0, rentNetThisMonth = 0, rentAppliedThisMonth = 0;
 
     // Rental income this month (if enabled). Applies to mortgage only if user opts in.
-    let rentGrossThisMonth = 0, rentNetThisMonth = 0, rentAppliedThisMonth = 0;
     if (rentalOn){
       const emiForRatio = monthlyPaymentInitial; // rent is pegged to original EMI
       const rentStartM = Math.round((sc.rental.startYear||0)*12);
@@ -952,9 +1049,7 @@ function simulate(sc, opts={}){
         if (rentalApplies){
           const surplus = rentNetThisMonth - curPmt;
           if (surplus > 0){
-            extraThisMonth += surplus;
             rentAppliedThisMonth = surplus;
-            totalRentAppliedToPrincipal += surplus;
           }
         }
       }
@@ -968,16 +1063,43 @@ function simulate(sc, opts={}){
                        : lp.recur === 'every-5y' ? 5
                        : 0;
       if (everyYears === 0){
-        if (startMonth === m) extraThisMonth += Math.max(0, lp.amount || 0);
+        if (startMonth === m) extraFromLump += Math.max(0, lp.amount || 0);
       } else {
         const untilMonth = (lp.untilYear != null && isFinite(lp.untilYear))
           ? Math.round(lp.untilYear * 12)
           : n;
         if (m >= startMonth && m <= untilMonth && ((m - startMonth) % (everyYears * 12) === 0)){
-          extraThisMonth += Math.max(0, lp.amount || 0);
+          extraFromLump += Math.max(0, lp.amount || 0);
         }
       }
     }
+
+    let extraThisMonth = extraFromMonthly + extraFromLump + rentAppliedThisMonth;
+
+    // ---- Bank prepayment cap (applied to total extra principal this year) ----
+    if (capEnabled && extraThisMonth > 0){
+      const ceiling = capBasis === 'outstanding'
+        ? yearStartBalance * capPct
+        : loan * capPct;
+      const remainingAllowance = Math.max(0, ceiling - yearPrepayCount);
+      if (extraThisMonth > remainingAllowance){
+        let blocked = extraThisMonth - remainingAllowance;
+        totalPrepayBlocked += blocked;
+        yearsCapped.add(curYear);
+        // Roll back proportionally — rent surplus stays as cashflow,
+        // lumps/extra-monthly are simply not paid.
+        const fromRent = Math.min(blocked, rentAppliedThisMonth);
+        rentAppliedThisMonth -= fromRent; blocked -= fromRent;
+        const fromLump = Math.min(blocked, extraFromLump);
+        extraFromLump -= fromLump; blocked -= fromLump;
+        if (blocked > 0){
+          extraFromMonthly = Math.max(0, extraFromMonthly - blocked);
+        }
+        extraThisMonth = remainingAllowance;
+      }
+    }
+    if (rentalOn && rentAppliedThisMonth > 0) totalRentAppliedToPrincipal += rentAppliedThisMonth;
+    yearPrepayCount += extraThisMonth;
 
     let thisPaid = curPmt;
     let actualPrincipal = principal + extraThisMonth;
@@ -1086,6 +1208,14 @@ function simulate(sc, opts={}){
     payoffMonth,
     series, byYear, effectiveRate,
     earlySettle: hitSettlement,
+    prepayCap: capEnabled ? {
+      enabled: true,
+      pctPerYear: capCfg.pctPerYear || 0,
+      basis: capBasis,
+      ceiling: capBasis === 'outstanding' ? null : loan * capPct,
+      blockedTotal: totalPrepayBlocked,
+      yearsCappedCount: yearsCapped.size
+    } : null,
     rental: rentalOn ? {
       initialMonthlyRent: initialRent(sc, monthlyPaymentInitial),
       initialNetMonthlyRent: initialRent(sc, monthlyPaymentInitial) * (1-(sc.rental.vacancyPct||0)/100) * (1-(sc.rental.maintPct||0)/100),
@@ -1178,16 +1308,31 @@ function rentVsBuy(sc, r, fees){
 
 // ---------- rendering: inputs ----------
 function hydrateInputs(){
+  // Defensive: coerce numeric fields so a partially-broken saved state can't blank out inputs.
+  if (!isFinite(state.purchasePrice) || state.purchasePrice <= 0) state.purchasePrice = 2000000;
+  if (!isFinite(state.downPaymentPct) || state.downPaymentPct < 0) state.downPaymentPct = 20;
+  if (!isFinite(state.loanYears) || state.loanYears <= 0) state.loanYears = 25;
+  if (!isFinite(state.ratePct) || state.ratePct < 0) state.ratePct = 3.75;
+
+  const downAmt = Math.round(state.purchasePrice * state.downPaymentPct / 100);
   $('#currency').value = state.currency;
   $('#purchasePrice').value = state.purchasePrice;
   $('#priceRange').value = clamp(state.purchasePrice, 300000, 20000000);
-  $('#downPaymentAmt').value = Math.round(state.purchasePrice * state.downPaymentPct/100);
+  $('#downPaymentAmt').value = downAmt;
   $('#downRange').value = state.downPaymentPct;
+  $('#loanAmount').value = Math.round(state.purchasePrice - downAmt);
   $('#loanYears').value = state.loanYears;
   $('#yearsRange').value = clamp(state.loanYears, 1, 40);
   $('#ratePct').value = state.ratePct;
   $('#rateRange').value = clamp(state.ratePct, 0.5, 15);
   $('#extraMonthly').value = state.extraMonthly || 0;
+
+  // Prepayment cap
+  const cap = state.prepayCap || {};
+  $('#tglPrepayCap').classList.toggle('on', !!cap.enabled);
+  $('#capControls').style.display = cap.enabled ? 'grid' : 'none';
+  $('#capPctPerYear').value = cap.pctPerYear != null ? cap.pctPerYear : 30;
+  $('#capBasis').value = cap.basis || 'original';
 
   // Settlement
   $('#tglSettle').classList.toggle('on', !!state.settle.enabled);
@@ -1314,15 +1459,42 @@ function renderFees(){
 }
 
 // ---------- rendering: lumps ----------
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function monthName(m){
+  // m is 1..12 (1 = month 1 of the loan-year, which is January-equivalent of the loan calendar)
+  const idx = ((m - 1) % 12 + 12) % 12;
+  return MONTH_NAMES[idx];
+}
 function recurLabel(lp){
   const amt = fmtCur(lp.amount || 0, 0);
-  const start = `year ${lp.atYear || 0}`;
+  const yr = lp.atYear || 0;
+  const mo = lp.atMonth || 1;
+  const start = `year ${yr} · month ${mo} (${monthName(mo)})`;
   const every = lp.recur === 'yearly' ? 1 : lp.recur === 'every-2y' ? 2 : lp.recur === 'every-5y' ? 5 : 0;
   if (!every) return `One-time · ${amt} at ${start}`;
   const until = (lp.untilYear != null && isFinite(lp.untilYear)) ? lp.untilYear : state.loanYears;
-  const occ = Math.max(0, Math.floor((until - (lp.atYear || 0)) / every) + 1);
+  const occ = Math.max(0, Math.floor((until - yr) / every) + 1);
   const everyText = every === 1 ? 'every year' : `every ${every} years`;
-  return `↻ ${amt} ${everyText} · ${start} → year ${until} · ${occ} payments · total ${fmtCur(amt.startsWith('-')?0:(lp.amount||0)*occ, 0)}`;
+  return `↻ ${amt} ${everyText} · ${start} → year ${until} · ${occ} payments · total ${fmtCur((lp.amount||0)*occ, 0)}`;
+}
+// Quick check: does this lump (alone, ignoring others) violate the prepay cap in its trigger year?
+function lumpExceedsCap(lp){
+  const cap = state.prepayCap;
+  if (!cap || !cap.enabled) return null;
+  const loan = Math.max(0, state.purchasePrice * (1 - state.downPaymentPct/100));
+  const yearlyExtra = (state.extraMonthly || 0) * 12;
+  const ceiling = cap.basis === 'outstanding' ? null : loan * (cap.pctPerYear/100);
+  // For "outstanding" basis we'd need to simulate — keep this hint conservative.
+  if (ceiling == null) return null;
+  const lumpYearly = (lp.amount || 0);  // single occurrence per year (yearly recur), or one-time
+  const combined = yearlyExtra + lumpYearly;
+  if (combined > ceiling){
+    return {
+      ceiling,
+      over: combined - ceiling
+    };
+  }
+  return null;
 }
 
 function renderLumps(){
@@ -1338,13 +1510,18 @@ function renderLumps(){
     const recur = lp.recur || 'once';
     const showUntil = recur !== 'once';
     const until = (lp.untilYear != null && isFinite(lp.untilYear)) ? lp.untilYear : state.loanYears;
+    const atMonth = lp.atMonth || 1;
+    const monthOpts = MONTH_NAMES.map((nm, idx) => {
+      const v = idx + 1;
+      return `<option value="${v}" ${atMonth===v?'selected':''}>Month ${v} · ${nm}</option>`;
+    }).join('');
     card.innerHTML = `
       <div class="lump-head">
         <input class="input" type="text" placeholder="Label (e.g. annual bonus)" data-lk="label" value="${(lp.label||'').replace(/"/g,'&quot;')}">
         <button class="x" title="Remove">✕</button>
       </div>
       <div class="lump-grid ${showUntil ? 'with-until' : ''}">
-        <div class="field">
+        <div class="field" style="grid-column:1 / -1">
           <label>Amount</label>
           <div class="input-prefix cur-prefix" data-prefix="${curSymbol()}"><input class="input" type="number" placeholder="0" step="1000" min="0" data-lk="amount" value="${lp.amount||0}"></div>
         </div>
@@ -1360,6 +1537,10 @@ function renderLumps(){
         <div class="field">
           <label>${showUntil ? 'Start year' : 'At year'}</label>
           <input class="input" type="number" placeholder="0" min="0" max="${state.loanYears}" step="1" data-lk="atYear" value="${lp.atYear||0}">
+        </div>
+        <div class="field">
+          <label>Month of year</label>
+          <select data-lk="atMonth">${monthOpts}</select>
         </div>
         ${showUntil ? `
         <div class="field" style="grid-column:1 / -1">
@@ -1505,23 +1686,44 @@ function renderStats(r, baseline, fees){
   renderRentalPreview(r);
   renderRentalYearly(r);
 
-  // Savings banner
+  // Savings banner + Savings stat card
   const banner = $('#savingsBanner');
-  if (baseline && (state.extraMonthly > 0 || (state.lumps||[]).length > 0 || r.earlySettle || (r.rental && r.rental.applyToMortgage))){
+  const savingsCard = $('#statSavingsCard');
+  const hasPrepay = baseline && (state.extraMonthly > 0 || (state.lumps||[]).length > 0 || r.earlySettle || (r.rental && r.rental.applyToMortgage));
+  if (hasPrepay){
     const interestSaved = baseline.totalInterest - r.totalInterest;
-    const monthsSavedN = baseline.payoffMonth - r.payoffMonth;
+    const monthsSavedN  = baseline.payoffMonth - r.payoffMonth;
+    const yrsSaved = Math.floor(Math.max(0, monthsSavedN)/12);
+    const moSaved  = Math.max(0, monthsSavedN) % 12;
+    const when = yrsSaved > 0 ? `${yrsSaved} yr ${moSaved} mo` : `${moSaved} mo`;
+
     if (interestSaved > 1 || monthsSavedN > 0){
       banner.style.display = '';
       $('#savingsAmount').textContent = fmtFull(interestSaved);
-      const yrsSaved = Math.floor(monthsSavedN/12);
-      const moSaved = monthsSavedN % 12;
-      const when = yrsSaved > 0 ? `${yrsSaved} yr ${moSaved} mo` : `${moSaved} mo`;
       $('#monthsSaved').textContent = when;
+
+      // Hero savings stat card
+      savingsCard.style.display = '';
+      $('#statSavings').textContent = fmtCur(interestSaved, 1);
+      $('#statSavingsExact').textContent = fmtFull(interestSaved);
+
+      // Build subtitle: "<years saved> earlier · payoff <date>" + cap warning if any
+      const newPayoff = new Date();
+      newPayoff.setMonth(newPayoff.getMonth() + r.payoffMonth);
+      const payoffStr = newPayoff.toLocaleDateString(undefined, {month:'short', year:'numeric'});
+      const yrsRunning = (r.payoffMonth/12).toFixed(1);
+      let sub = `paid off in ${yrsRunning} yrs (${payoffStr}) · ${when} earlier`;
+      if (r.prepayCap && r.prepayCap.blockedTotal > 0.5){
+        sub += ` · ⚠ ${fmtCur(r.prepayCap.blockedTotal,0)} blocked by ${r.prepayCap.pctPerYear}% cap (${r.prepayCap.yearsCappedCount} yrs hit limit)`;
+      }
+      $('#statSavingsSub').textContent = sub;
     } else {
       banner.style.display = 'none';
+      savingsCard.style.display = 'none';
     }
   } else {
     banner.style.display = 'none';
+    savingsCard.style.display = 'none';
   }
 }
 
@@ -1730,32 +1932,93 @@ function renderCharts(r, baseline, rvb){
   // Rent vs buy
   if (rvb){
     $('#rentVsBuyCard').style.display = '';
-    const rvbLabels = rvb.points.map(p => `Yr ${p.year}`);
+    const rvbLabels = rvb.points.map(p => `Year ${p.year}`);
     ensureChart('chartRent', {
       type:'line',
       data:{
         labels: rvbLabels,
         datasets: [
-          { label:'Net position: BUY', data: rvb.points.map(p=>p.netBuy), borderColor:'rgba(5,150,105,1)', backgroundColor:'rgba(5,150,105,0.08)', fill:true, tension:0.25, borderWidth:2.5, pointRadius:0 },
-          { label:'Net position: RENT + invest', data: rvb.points.map(p=>p.netRent), borderColor:'rgba(124,58,237,1)', backgroundColor:'rgba(124,58,237,0.06)', fill:false, tension:0.25, borderWidth:2, pointRadius:0, borderDash:[6,4] }
+          {
+            label:'BUY',
+            data: rvb.points.map(p=>p.netBuy),
+            borderColor:'rgba(5,150,105,1)',
+            backgroundColor:'rgba(5,150,105,0.10)',
+            fill:true, tension:0.25, borderWidth:3, pointRadius:0, pointHoverRadius:5
+          },
+          {
+            label:'RENT + invest',
+            data: rvb.points.map(p=>p.netRent),
+            borderColor:'rgba(124,58,237,1)',
+            backgroundColor:'rgba(124,58,237,0.04)',
+            fill:false, tension:0.25, borderWidth:2.5, pointRadius:0, pointHoverRadius:5,
+            borderDash:[8,4]
+          }
         ]
       },
       options:{
         responsive:true, maintainAspectRatio:false,
         interaction:{ mode:'index', intersect:false },
         plugins:{
-          legend:{ labels:{ font:{family:'Plus Jakarta Sans'}, boxWidth:12, padding:12 }},
-          tooltip:{ callbacks:{ label: it => `${it.dataset.label}: ${fmtFull(it.parsed.y||0)}` }}
+          legend:{ display:false },  // we use our custom legend strip above
+          tooltip:{
+            backgroundColor:'rgba(15,23,42,0.94)',
+            padding:12, cornerRadius:8, titleFont:{size:12, weight:'700'}, bodyFont:{size:12},
+            callbacks:{
+              title: items => items[0].label,
+              label: it => {
+                const p = rvb.points[it.dataIndex];
+                if (it.dataset.label === 'BUY'){
+                  return [
+                    `🏠 BUY: ${fmtFull(p.netBuy)}`,
+                    `   property value: ${fmtFull(p.propertyValue)}`,
+                    `   cumulative interest paid: ${fmtFull(p.cumInterest)}`
+                  ];
+                }
+                return [
+                  `📈 RENT + invest: ${fmtFull(p.netRent)}`,
+                  `   invested portfolio: ${fmtFull(p.invested)}`,
+                  `   cumulative rent paid: ${fmtFull(p.cumRent)}`
+                ];
+              },
+              afterBody: items => {
+                const p = rvb.points[items[0].dataIndex];
+                const winner = p.netBuy >= p.netRent ? 'BUY' : 'RENT';
+                const lead = Math.abs(p.netBuy - p.netRent);
+                return ['', `${winner} ahead by ${fmtFull(lead)}`];
+              }
+            }
+          }
         },
         scales:{
-          x:{ grid:{ display:false }},
-          y:{ ticks:{ callback: v => fmtCur(v,0), font:{family:'JetBrains Mono'}}, grid:{ color:'rgba(15,23,42,0.05)'} }
+          x:{ grid:{ display:false }, title:{ display:true, text:'Years from purchase', font:{size:11, weight:'600'}, color:'#516079' }},
+          y:{
+            ticks:{ callback: v => fmtCur(v,0), font:{family:'JetBrains Mono'}},
+            grid:{ color:'rgba(15,23,42,0.05)'},
+            title:{ display:true, text:'Net wealth (after costs)', font:{size:11, weight:'600'}, color:'#516079' }
+          }
         }
       }
     });
+    // Header sub
     $('#rentChartSub').textContent = rvb.breakEvenYear
-      ? `break-even at year ${rvb.breakEvenYear}`
-      : 'renting & investing stays ahead for the full term';
+      ? `· buying breaks even at year ${rvb.breakEvenYear}`
+      : '· renting + investing stays ahead for the full term';
+
+    // Bottom summary block — concrete winner over full term
+    const last = rvb.points[rvb.points.length - 1];
+    const buyWinsAtEnd = last.netBuy >= last.netRent;
+    const lead = Math.abs(last.netBuy - last.netRent);
+    const summary = $('#rvbSummary');
+    summary.classList.toggle('lose', !buyWinsAtEnd);
+    const winnerName = buyWinsAtEnd ? 'BUY' : 'RENT + invest';
+    const winnerCls = buyWinsAtEnd ? 'green' : 'purple';
+    let html = `<span class="rvb-win ${winnerCls}">After ${last.year} years: <b>${winnerName}</b> wins by ${fmtFull(lead)}</span>`;
+    html += `BUY ends at <b>${fmtFull(last.netBuy)}</b> (property value ${fmtFull(last.propertyValue)} − ${fmtFull(last.cumInterest)} interest − upfront).<br>`;
+    html += `RENT + invest ends at <b>${fmtFull(last.netRent)}</b> (portfolio ${fmtFull(last.invested)} − ${fmtFull(last.cumRent)} rent paid − ${fmtFull(last.invested - last.netRent - last.cumRent)} principal).`;
+    if (rvb.breakEvenYear){
+      html += `<br>Buying first beats renting at <b>year ${rvb.breakEvenYear}</b>.`;
+    }
+    summary.innerHTML = html;
   } else {
     $('#rentVsBuyCard').style.display = 'none';
   }
@@ -2080,6 +2343,30 @@ function bindInputs(){
     state.ratePhases.push({ id:uid(), startYear:start, endYear:end, ratePct: state.ratePct });
     persistState();
     renderRatePhases(); debouncedRender();
+  });
+
+  // Bank prepayment cap
+  $('#tglPrepayCap').addEventListener('click', ()=>{
+    markDirty();
+    state.prepayCap = state.prepayCap || { pctPerYear:30, basis:'original' };
+    state.prepayCap.enabled = !state.prepayCap.enabled;
+    $('#tglPrepayCap').classList.toggle('on', state.prepayCap.enabled);
+    $('#capControls').style.display = state.prepayCap.enabled ? 'grid' : 'none';
+    persistState();
+    debouncedRender();
+  });
+  $('#capPctPerYear').addEventListener('input', e => {
+    markDirty();
+    const v = parseFloat(e.target.value);
+    state.prepayCap.pctPerYear = isFinite(v) ? Math.max(0, Math.min(100, v)) : 30;
+    persistState();
+    debouncedRender();
+  });
+  $('#capBasis').addEventListener('change', e => {
+    markDirty();
+    state.prepayCap.basis = e.target.value === 'outstanding' ? 'outstanding' : 'original';
+    persistState();
+    debouncedRender();
   });
 
   // Early settlement
